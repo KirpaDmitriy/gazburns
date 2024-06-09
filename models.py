@@ -8,6 +8,7 @@ class GenerationParams(BaseModel):
 
 class GenerationSessionId(BaseModel):
     session_id: str
+    src: str = Field(..., description="URL файла изображения")
 
 
 class TextParams(BaseModel):
