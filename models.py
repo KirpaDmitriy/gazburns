@@ -4,15 +4,12 @@ from pydantic import BaseModel, Field
 class GenerationParams(BaseModel):
     audience: str | None = None
     product: str | None = None
-
-
-class GenerationSessionId(BaseModel):
-    session_id: str
-    src: str = Field(..., description="URL файла изображения")
+    width: int
+    height: int
 
 
 class TextParams(BaseModel):
-    session_id: str
+    case_id: str
     title: str | None = None
     subtitle: str | None = None
 
@@ -20,10 +17,18 @@ class TextParams(BaseModel):
 class PictureInfo(BaseModel):
     id: str
     src: str = Field(..., description="URL файла изображения")
+    title: str | None = None
+    subtitle: str | None = None
 
 
-class GenerationResult(BaseModel):
+class Case(BaseModel):
     id: str
-    title: str | None
-    description: str | None
-    data: PictureInfo = Field(..., description="Данные об изображении")
+    images: list[PictureInfo] = Field(
+        ..., description="URL файлов изображений из истории генераций для данной сессии"
+    )
+    meta_information: GenerationParams
+
+
+class GeneratedFormText(BaseModel):
+    title: str
+    subtitle: str
