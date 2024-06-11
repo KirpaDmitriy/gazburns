@@ -3,7 +3,6 @@ import uuid
 from datetime import datetime, timedelta
 
 from fastapi import Depends, FastAPI, Header, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
@@ -33,39 +32,36 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
 fake_users_db = {
     "johndoe": {
         "username": "johndoe",
         "full_name": "John Doe",
         "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$6M6D0QlV4o5n8c3gK5ZtAePfFqJeeX0yA1tN6zVowHdQrR7aW8p3G",  # Password is "secret"
+        "hashed_password": pwd_context.hash("aboba"),
     }
 }
-
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 
-# Get user
 def get_user(db, username: str):
-    if username in db:
-        user_dict = db[username]
-        return user_dict
+    return {
+        "username": "johndoe",
+        "full_name": "John Doe",
+        "email": "johndoe@example.com",
+        "hashed_password": pwd_context.hash("aboba"),
+    }
 
 
 def authenticate_user(fake_users_db, username: str, password: str) -> dict | None:
     user = get_user(fake_users_db, username)
     if user and verify_password(password, user["hashed_password"]):
-        return {
-            "username": "johndoe",
-            "full_name": "John Doe",
-            "email": "johndoe@example.com",
-            "hashed_password": "$2b$12$6M6D0QlV4o5n8c3gK5ZtAePfFqJeeX0yA1tN6zVowHdQrR7aW8p3G",
-        }
+        return user
 
 
 def create_access_token(data: dict, expires_delta: timedelta):
