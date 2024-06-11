@@ -36,6 +36,11 @@ class GeneratedFormText(BaseModel):
     subtitle: str
 
 
+class User(BaseModel):
+    username: str
+    password: str
+
+
 MEGA_URL = "https://steamuserimages-a.akamaihd.net/ugc/862857581989807965/89518896478AB5FC4C81035678DB2B441ACE107A/?imw=512&imh=384&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true"
 general_case = Case(
     id=str(uuid.uuid4()),

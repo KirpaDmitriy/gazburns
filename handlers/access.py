@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from fastapi import APIRouter, HTTPException, status
 
+from models import User
 from src.access import (ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user,
                         create_access_token)
 
@@ -9,8 +10,8 @@ router = APIRouter()
 
 
 @router.post("/token")
-async def login_for_access_token(username: str, password: str):
-    user = await authenticate_user({}, username, password)
+async def login_for_access_token(auth_user: User):
+    user = await authenticate_user({}, auth_user.username, auth_user.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
