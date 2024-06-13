@@ -1,11 +1,23 @@
 import uuid
+from enum import Enum
 
 from pydantic import BaseModel, Field
 
 
+class MyEnum(Enum):
+    male = "first"
+    female = "second"
+    null = ""
+
+
 class GenerationParams(BaseModel):
-    audience: str | None = None
+    ageTo: int | None = None
+    ageFrom: int | None = None
+    salaryFrom: float | None = None
+    salaryTo: float | None = None
     product: str | None = None
+    gender: MyEnum = MyEnum.null
+    audience: str | None = None
     width: int
     height: int
 
