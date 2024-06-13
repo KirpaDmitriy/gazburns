@@ -19,8 +19,8 @@ def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 
-async def authenticate_user(fake_users_db, username: str, password: str) -> dict | None:
-    user = await get_user(fake_users_db, username)
+async def authenticate_user(username: str, password: str) -> dict | None:
+    user = await get_user(username)
     if user and verify_password(password, user["hashed_password"]):
         return user
 
