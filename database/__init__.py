@@ -18,6 +18,13 @@ async def get_user(username: str) -> dict:
                 )
             )
         ).one_or_none()
+        print(
+            f"""Kek: {(
+            await session.execute(
+                select(User.username, User.hashed_password)
+            )
+        ).scalars()}"""
+        )
         if not selected_user:
             return {}
 
