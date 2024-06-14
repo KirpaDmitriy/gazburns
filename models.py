@@ -21,6 +21,19 @@ class GenerationParams(BaseModel):
     width: int
     height: int
 
+    def to_dict(self) -> dict:
+        return {
+            "ageTo": self.ageTo,
+            "ageFrom": self.ageFrom,
+            "salaryFrom": self.salaryFrom,
+            "salaryTo": self.salaryTo,
+            "product": self.product,
+            "gender": self.gender,
+            "audience": self.audience,
+            "width": self.width,
+            "height": self.height,
+        }
+
 
 class TextParams(BaseModel):
     case_id: str
@@ -33,6 +46,14 @@ class PictureInfo(BaseModel):
     src: str = Field(..., description="URL файла изображения")
     title: str | None = None
     subtitle: str | None = None
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "src": self.src,
+            "title": self.title,
+            "subtitle": self.subtitle,
+        }
 
 
 class Case(BaseModel):
