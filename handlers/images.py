@@ -17,6 +17,7 @@ async def generate_image(
     case_as_dict["images"] = [image.to_dict() for image in case_as_dict["images"]]
     case_as_dict["meta_information"] = case_as_dict["meta_information"].to_dict()
     case_as_dict["username"] = current_user
+    print(case_as_dict)
     await save_case(**case_as_dict)
     return case
 
