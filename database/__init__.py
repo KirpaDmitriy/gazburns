@@ -20,7 +20,7 @@ async def get_user(username: str) -> dict:
         ).one_or_none()
 
         print(
-            f"""Kek: {[id_[0] for id_ in (
+            f"""Kek: {[id_ for id_ in (
             await session.execute(
                 select(User.username, User.hashed_password)
             )
