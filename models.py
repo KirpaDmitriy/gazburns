@@ -28,7 +28,7 @@ class GenerationParams(BaseModel):
             "salaryFrom": self.salaryFrom,
             "salaryTo": self.salaryTo,
             "product": self.product,
-            "gender": self.gender,
+            "gender": str(self.gender),
             "audience": self.audience,
             "width": self.width,
             "height": self.height,
