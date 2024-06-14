@@ -17,12 +17,6 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
-async def startup():
-    await database.connect()
-    print("Database connection established")
-
-
 app.include_router(access_router)
 app.include_router(history_router)
 app.include_router(images_router)
