@@ -63,6 +63,13 @@ class Case(BaseModel):
     )
     meta_information: GenerationParams
 
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "images": self.images,
+            "meta_information": self.meta_information,
+        }
+
 
 class GeneratedFormText(BaseModel):
     title: str
