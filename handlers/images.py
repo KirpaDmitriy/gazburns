@@ -17,11 +17,11 @@ async def generate_image(
     case_as_dict["images"] = [image.to_dict() for image in case_as_dict["images"]]
     case_as_dict["meta_information"] = case_as_dict["meta_information"].to_dict()
     case_as_dict["username"] = current_user
-    print(case_as_dict)
+    print(f"Case as dict: {case_as_dict}")
     try:
         await save_case(**case_as_dict)
     except Exception as exep:
-        print(exep)
+        print(f"Saving case died: {exep}")
     return case
 
 
