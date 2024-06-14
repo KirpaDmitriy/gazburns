@@ -11,8 +11,12 @@ async def save_case(*args, **kwargs) -> None: ...
 
 async def get_user(username: str) -> dict:
     async with async_pg_session() as session:
-        selected_user = await session.execute(
-            select(User.username, User.hashed_password).where(User.username == username)
+        selected_user = (
+            await session.execute(
+                select(User.username, User.hashed_password).where(
+                    User.username == username
+                )
+            )
         ).one_or_none()
         if not selected_user:
             return {}
