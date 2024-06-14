@@ -1,21 +1,13 @@
 import numpy as np
 import torch
 from diffusers import AutoPipelineForText2Image
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw, ImageFont
 from rembg import remove
 
 pipeline = AutoPipelineForText2Image.from_pretrained(
     "kandinsky-community/kandinsky-2-1", torch_dtype=torch.float16
 ).to("cuda")
 pipeline.enable_model_cpu_offload()
-
-import random
-
-import numpy as np
-import torch
-from diffusers import AutoPipelineForText2Image
-from PIL import Image, ImageDraw, ImageFont
-from rembg import remove
 
 # Определение рекомендаций на основе кластеров
 recommendations = {

@@ -34,7 +34,7 @@ def create_access_token(data: dict, expires_delta: timedelta):
     return encoded_jwt
 
 
-def get_current_user(authorization: str = Header(...)):
+def get_current_user(authorization: str = Header(...)) -> str:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid authentication credentials",
