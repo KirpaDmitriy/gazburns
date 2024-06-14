@@ -20,8 +20,8 @@ async def generate_image(
     print(case_as_dict)
     try:
         await save_case(**case_as_dict)
-    except Exception:
-        ...
+    except Exception as exep:
+        print(exep)
     return case
 
 
