@@ -21,6 +21,7 @@ def verify_password(plain_password, hashed_password):
 
 async def authenticate_user(username: str, password: str) -> dict | None:
     user = await get_user(username)
+    print(f"User: {user}")
     if user and verify_password(password, user["hashed_password"]):
         return user
 
