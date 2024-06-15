@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from models import Case, GenerationParams, general_case
+from models import Case, GenerationParams
 from src.images_generation import generate_image
 
 
