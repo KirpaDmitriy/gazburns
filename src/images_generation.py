@@ -7,7 +7,7 @@ from rembg import remove
 pipeline = AutoPipelineForText2Image.from_pretrained(
     "kandinsky-community/kandinsky-2-1", torch_dtype=torch.float16
 )  # .to("cuda")
-pipeline.enable_model_cpu_offload()
+# pipeline.enable_model_cpu_offload()
 
 # Определение рекомендаций на основе кластеров
 recommendations = {
