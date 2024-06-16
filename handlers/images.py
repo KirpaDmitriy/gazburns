@@ -67,6 +67,7 @@ async def add_text(params: TextParams, current_user: str = Depends(get_current_u
         await add_text_to_image(
             image,
             params.title,
+            params.subtitle,
             (
                 case_as_dict["meta_information"]["height"],
                 case_as_dict["meta_information"]["width"],
