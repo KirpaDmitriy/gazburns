@@ -1,5 +1,3 @@
-from functools import lru_cache
-
 import numpy as np
 import torch
 from diffusers import AutoPipelineForText2Image
@@ -29,7 +27,6 @@ recommendations = {
 
 
 # Функция для генерации изображения
-@lru_cache(maxsize=16)
 def generate_raw_image(cluster):
     prompt = f"3d image of {recommendations[cluster]}, cinematic, moody white lighting, official"
     negative_prompt = "low quality, bad quality, funny, detailed"
