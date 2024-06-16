@@ -371,6 +371,10 @@ def generate_position(banner_size: tuple[int, int]) -> tuple[int, int]:
     return text_position
 
 
+def calc_font_size(banner_size) -> int:
+    return int(max(banner_size[0] / 7, banner_size[1] / 7))
+
+
 # Функция для добавления текста на изображение
 async def add_text_to_image(image, text, banner_size, filename):
     position = generate_position(banner_size)
