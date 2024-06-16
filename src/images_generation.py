@@ -34,7 +34,10 @@ recommendations = {
 
 # Функция для генерации изображения
 def generate_raw_image(cluster):
-    prompt = f"3d image of {recommendations[cluster]}, cinematic, moody white lighting, official"
+    cluster_objects = recommendations.get(
+        cluster, "consumer loan, car, smartphone, travel suitcase"
+    )
+    prompt = f"3d image of {cluster_objects}, cinematic, moody white lighting, official"
     negative_prompt = "low quality, bad quality, funny, detailed"
     with autocast("cuda"):
         image = pipeline(
@@ -123,5 +126,5 @@ def generate_banner(cluster: str, filename: str, product=None) -> None:
 
 
 # Функция для генерации баннера с учетом извлечённого классификатором кластера
-async def generate_image(audience: str, product: str, filename: str) -> None:
-    generate_banner("k. Без продукта (7,13,18)", filename=filename)
+async def generate_image(segment: str, filename: str) -> None:
+    generate_banner(segment, filename=filename)

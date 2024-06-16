@@ -11,7 +11,7 @@ log = app_logger(__name__)
 async def extract_case(params: GenerationParams) -> Case:
     file_id = str(uuid.uuid4())
     filename = f"picture_{file_id}"
-    await generate_image(params.audience, params.product, filename=filename)
+    await generate_image(params.segment, filename=filename)
     return Case(
         id=str(uuid.uuid4()),
         images=[
