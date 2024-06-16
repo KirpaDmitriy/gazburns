@@ -40,20 +40,39 @@ async def add_text(params: TextParams, current_user: str = Depends(get_current_u
     case_as_dict = await get_case(case_id=params.case_id, username=current_user)
 
     log.info(f"Found case in /add_text: {case_as_dict}")
-    image_url = case_as_dict["images"][-1]["src"]
-    async with httpx.AsyncClient() as client:
-        response = await client.get(image_url)
-        image = Image.open(BytesIO(response.content))
 
-    file_id = str(uuid.uuid4())
-    await add_text_to_image(image, params.title, file_id)
+    # Получаем id и сслылку на исходную картинку
+    changed_image = params.picture_id
+    changed_image_id = changed_image.split("_conv_to_")[0]
+    changed_image_url = f"{os.environ['FS_HOST']}/picture_{changed_image_id}.png"
 
-    case_as_dict["images"].append(
-        {
-            "id": file_id,
-            "src": f"{os.environ['FS_HOST']}/{file_id}_text.png",
-        }
-    )
+    if not params.title and not params.subtitle:
+        log.info(f"Removing text from image")
+        case_as_dict["images"].append(
+            {
+                "id": changed_image_id,
+                "src": f"{os.environ['FS_HOST']}/picture_{changed_image_id}.png",
+            }
+        )
+    else:
+        log.info(f"Adding text to image")
+
+        # Запрашиваем исходную картинку
+        async with httpx.AsyncClient() as client:
+            response = await client.get(changed_image_url)
+            image = Image.open(BytesIO(response.content))
+
+        file_id = str(uuid.uuid4())
+        filename = f"text_{changed_image_id}_conv_to_{file_id}"
+        await add_text_to_image(image, params.title, filename)
+
+        case_as_dict["images"].append(
+            {
+                "id": f"{changed_image_id}_conv_to_{file_id}",
+                "src": f"{os.environ['FS_HOST']}/{filename}.png",
+            }
+        )
+
     log.info(f"Case as dict: {case_as_dict}")
 
     try:
@@ -64,3 +83,7 @@ async def add_text(params: TextParams, current_user: str = Depends(get_current_u
         log.error(f"Saving case in /add_text died: {exep}")
 
     return case_as_dict
+
+
+@router.post("/regenerate", response_model=Case)
+async def add_text(current_user: str = Depends(get_current_user)): ...

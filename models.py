@@ -37,6 +37,7 @@ class GenerationParams(BaseModel):
 
 class TextParams(BaseModel):
     case_id: str
+    picture_id: str
     title: str | None = None
     subtitle: str | None = None
 

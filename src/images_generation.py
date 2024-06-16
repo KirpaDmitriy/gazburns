@@ -82,14 +82,14 @@ def combine_images(banner_image, generated_image, position):
 
 
 # Функция для добавления текста на изображение
-async def add_text_to_image(image, text, image_id: str) -> None:
+async def add_text_to_image(image, text, filename: str) -> None:
     draw = ImageDraw.Draw(image)
     font = (
         ImageFont.load_default()
     )  # Вы можете заменить на другой шрифт при необходимости
     text_position = (50, 50)
     draw.text(text_position, text, font=font, fill="white")
-    image.save(f"{os.environ['PICTURES_FOLDER']}/{image_id}_text.png")
+    image.save(f"{os.environ['PICTURES_FOLDER']}/{filename}.png")
 
 
 # Основная функция для генерации баннера
