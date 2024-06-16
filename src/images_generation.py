@@ -1,11 +1,11 @@
+from functools import lru_cache
+
 import numpy as np
 import torch
 from diffusers import AutoPipelineForText2Image
 from PIL import Image, ImageDraw, ImageFont
 from rembg import remove
 from torch import autocast
-from functools import lru_cache
-
 
 pipeline = AutoPipelineForText2Image.from_pretrained(
     "kandinsky-community/kandinsky-2-1", torch_dtype=torch.float16
@@ -79,14 +79,14 @@ def combine_images(banner_image, generated_image, position):
 
 
 # Функция для добавления текста на изображение
-def add_text_to_image(image, text):
+async def add_text_to_image(image, text, image_id: str) -> None:
     draw = ImageDraw.Draw(image)
     font = (
         ImageFont.load_default()
     )  # Вы можете заменить на другой шрифт при необходимости
     text_position = (50, 50)
     draw.text(text_position, text, font=font, fill="white")
-    return image
+    image.save(f"pictures/{image_id}_text.png")
 
 
 # Основная функция для генерации баннера

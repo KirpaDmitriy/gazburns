@@ -32,5 +32,28 @@ async def save_case(**kwargs) -> None:
         await session.commit()
 
 
+async def add_image_to_case(case_id: str, images: list[str]) -> None:
+    async with async_pg_session() as session:
+        selected_case = (
+            await session.execute(select(CaseTable).where(CaseTable.id == case_id))
+        ).scalar()
+
+        if selected_case:
+            selected_case.images = images
+            await session.commit()
+
+
+async def get_case(case_id: str, username: str) -> dict:
+    async with async_pg_session() as session:
+        case = (
+            await session.execute(
+                select(CaseTable).where(id=case_id, username=username)
+            )
+        ).one_or_none()
+        return {
+            "": None,
+        }
+
+
 async def get_cases() -> list[Case]:
     return [general_case, general_case, general_case]

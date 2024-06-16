@@ -5,8 +5,8 @@ from pydantic import BaseModel, Field
 
 
 class MyEnum(Enum):
-    male = "first"
-    female = "second"
+    male = "male"
+    female = "female"
     null = ""
 
 
