@@ -81,6 +81,8 @@ async def add_text(params: TextParams, current_user: str = Depends(get_current_u
             {
                 "id": f"{changed_image_id}_conv_to_{file_id}",
                 "src": f"{os.environ['FS_HOST']}/{filename}.png",
+                "title": params.title,
+                "subtitle": params.subtitle,
             }
         )
 
