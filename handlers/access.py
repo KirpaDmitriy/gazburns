@@ -5,6 +5,9 @@ from fastapi import APIRouter, HTTPException, status
 from models import User
 from src.access import (ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user,
                         create_access_token)
+from src.logger import app_logger
+
+log = app_logger(__name__)
 
 router = APIRouter()
 

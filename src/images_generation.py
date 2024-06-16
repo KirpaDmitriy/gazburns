@@ -7,6 +7,10 @@ from PIL import Image, ImageDraw, ImageFont
 from rembg import remove
 from torch import autocast
 
+from src.logger import app_logger
+
+log = app_logger(__name__)
+
 pipeline = AutoPipelineForText2Image.from_pretrained(
     "kandinsky-community/kandinsky-2-1", torch_dtype=torch.float16
 ).to("cuda")

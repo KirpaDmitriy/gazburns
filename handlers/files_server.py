@@ -3,6 +3,10 @@ import os
 from fastapi import APIRouter, Depends
 from fastapi.responses import FileResponse
 
+from src.logger import app_logger
+
+log = app_logger(__name__)
+
 # from src.access import get_current_user
 
 router = APIRouter()

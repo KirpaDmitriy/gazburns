@@ -3,6 +3,9 @@ import uuid
 
 from models import Case, GenerationParams
 from src.images_generation import generate_image
+from src.logger import app_logger
+
+log = app_logger(__name__)
 
 
 async def extract_case(params: GenerationParams) -> Case:

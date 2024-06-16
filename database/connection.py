@@ -5,6 +5,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from yarl import URL
 
+from src.logger import app_logger
+
+log = app_logger(__name__)
+
 async_pg_session = sessionmaker(
     create_async_engine(
         str(

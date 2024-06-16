@@ -1,10 +1,13 @@
 from sqlalchemy import insert, select
 
 from models import Case
+from src.logger import app_logger
 
 from .connection import async_pg_session
 from .tables import Case as CaseTable
 from .tables import User
+
+log = app_logger(__name__)
 
 
 async def get_user(username: str) -> dict:
@@ -71,7 +74,6 @@ async def get_cases(username: str) -> list[dict]:
             .scalars()
             .all()
         )
-        print(user_cases, Case.schema()["properties"])
         return [
             {column: getattr(case, column) for column in Case.schema()["properties"]}
             for case in user_cases

@@ -2,6 +2,9 @@ from fastapi import APIRouter, Depends
 
 from models import GeneratedFormText
 from src.access import get_current_user
+from src.logger import app_logger
+
+log = app_logger(__name__)
 
 router = APIRouter()
 

@@ -6,6 +6,9 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 from database import get_user
+from src.logger import app_logger
+
+log = app_logger(__name__)
 
 SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 ALGORITHM = "HS256"
@@ -21,7 +24,7 @@ def verify_password(plain_password, hashed_password):
 
 async def authenticate_user(username: str, password: str) -> dict | None:
     user = await get_user(username)
-    print(f"User: {user}")
+    log.info(f"User: {user}")
     if user and verify_password(password, user["hashed_password"]):
         return user
 

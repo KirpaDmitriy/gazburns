@@ -10,7 +10,10 @@ from database import add_image_to_case, get_case, save_case
 from models import Case, GenerationParams, TextParams
 from src.access import get_current_user
 from src.images_generation import add_text_to_image
+from src.logger import app_logger
 from src.utils import extract_case
+
+log = app_logger(__name__)
 
 router = APIRouter()
 
@@ -24,11 +27,11 @@ async def generate_image(
     case_as_dict["images"] = [image.to_dict() for image in case_as_dict["images"]]
     case_as_dict["meta_information"] = case_as_dict["meta_information"].to_dict()
     case_as_dict["username"] = current_user
-    print(f"Case as dict: {case_as_dict}")
+    log.info(f"Case as dict: {case_as_dict}")
     try:
         await save_case(**case_as_dict)
     except Exception as exep:
-        print(f"Saving case in /generate_image died: {exep}")
+        log.error(f"Saving case in /generate_image died: {exep}")
     return case
 
 
@@ -36,7 +39,7 @@ async def generate_image(
 async def add_text(params: TextParams, current_user: str = Depends(get_current_user)):
     case_as_dict = await get_case(case_id=params.case_id, username=current_user)
 
-    print(f"Found case in /add_text: {case_as_dict}")
+    log.info(f"Found case in /add_text: {case_as_dict}")
     image_url = case_as_dict["images"][-1]["src"]
     async with httpx.AsyncClient() as client:
         response = await client.get(image_url)
@@ -51,13 +54,13 @@ async def add_text(params: TextParams, current_user: str = Depends(get_current_u
             "src": f"{os.environ['FS_HOST']}/{file_id}_text.png",
         }
     )
-    print(f"Case as dict: {case_as_dict}")
+    log.info(f"Case as dict: {case_as_dict}")
 
     try:
         await add_image_to_case(
             case_id=case_as_dict["id"], images=case_as_dict["images"]
         )
     except Exception as exep:
-        print(f"Saving case in /add_text died: {exep}")
+        log.error(f"Saving case in /add_text died: {exep}")
 
     return case_as_dict
