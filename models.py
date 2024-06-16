@@ -61,7 +61,10 @@ class Case(BaseModel):
     images: list[PictureInfo] = Field(
         ..., description="URL файлов изображений из истории генераций для данной сессии"
     )
-    meta_information: GenerationParams
+    meta_information: GenerationParams = Field(
+        ...,
+        description="Базовые параметры генерации: описание кластера и продукта, размеры изображения",
+    )
 
     def to_dict(self) -> dict:
         return {
