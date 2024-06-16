@@ -1,4 +1,5 @@
 import os
+import random
 import uuid
 from io import BytesIO
 
@@ -7,7 +8,7 @@ from fastapi import APIRouter, Depends
 from PIL import Image
 
 from database import add_image_to_case, get_case, save_case
-from models import Case, GenerationParams, TextParams
+from models import Case, GenerationParams, RegenParams, TextParams
 from src.access import get_current_user
 from src.images_generation import add_text_to_image
 from src.logger import app_logger
@@ -95,4 +96,36 @@ async def add_text(params: TextParams, current_user: str = Depends(get_current_u
 
 
 @router.post("/regenerate", response_model=Case)
-async def add_text(current_user: str = Depends(get_current_user)): ...
+async def add_text(params: RegenParams, current_user: str = Depends(get_current_user)):
+    case_as_dict = await get_case(case_id=params.case_id, username=current_user)
+
+    log.info(f"Found case in /add_text: {case_as_dict}")
+
+    file_id = str(uuid.uuid4())
+    filename = f"picture_{file_id}"
+    await generate_image(
+        random.choice(params.segment),
+        filename=filename,
+        banner_size=(
+            case_as_dict["meta_information"]["height"],
+            case_as_dict["meta_information"]["width"],
+        ),
+    )
+
+    case_as_dict["images"].append(
+        {
+            "id": file_id,
+            "src": f"{os.environ['FS_HOST']}/{filename}.png",
+        }
+    )
+
+    log.info(f"Case as dict: {case_as_dict}")
+
+    try:
+        await add_image_to_case(
+            case_id=case_as_dict["id"], images=case_as_dict["images"]
+        )
+    except Exception as exep:
+        log.error(f"Saving case in /add_text died: {exep}")
+
+    return case_as_dict

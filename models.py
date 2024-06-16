@@ -44,6 +44,10 @@ class TextParams(BaseModel):
     subtitle: str | None = None
 
 
+class RegenParams(BaseModel):
+    case_id: str
+
+
 class PictureInfo(BaseModel):
     id: str
     src: str = Field(..., description="URL файла изображения")
