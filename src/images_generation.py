@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import torch
 from diffusers import AutoPipelineForText2Image
@@ -83,7 +85,7 @@ async def add_text_to_image(image, text, image_id: str) -> None:
     )  # Вы можете заменить на другой шрифт при необходимости
     text_position = (50, 50)
     draw.text(text_position, text, font=font, fill="white")
-    image.save(f"pictures/{image_id}_text.png")
+    image.save(f"{os.environ['PICTURES_FOLDER']}/{image_id}_text.png")
 
 
 # Основная функция для генерации баннера
@@ -103,7 +105,7 @@ def generate_banner(cluster: str, filename: str, product=None) -> None:
     final_image = combine_images(
         gradient_background, scaled_image, (1050, 20)
     )  # Позиция может быть скорректирована
-    final_image.save(f"pictures/{filename}.png")
+    final_image.save(f"{os.environ['PICTURES_FOLDER']}/{filename}.png")
     # Добавление текста на изображение
     # random_text_key = random.choice(list(texts.keys()))
     # random_text = texts[random_text_key]
