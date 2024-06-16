@@ -324,7 +324,7 @@ def create_gradient_background(color1, color2, width, height):
 # Функция для генерации изображения
 def generate_raw_image(cluster):
     objects = get_random_objects(cluster)
-    prompt = f"{', '.join(objects)}, 3d, cinematic, blue moody lighting, realistic, official, big, solid white background"
+    prompt = f"{', '.join(objects)}, 3d, cinematic, blue moody lighting, realistic, official, big, solid white background, blue theme, banking thematics"
     negative_prompt = "low quality, bad quality, cartoon, futuristic"
     with autocast("cuda"):
         image = pipeline(
@@ -372,7 +372,7 @@ def generate_position(banner_size: tuple[int, int]) -> tuple[int, int]:
 
 
 # Функция для добавления текста на изображение
-def add_text_to_image(image, text, banner_size, filename):
+async def add_text_to_image(image, text, banner_size, filename):
     position = generate_position(banner_size)
     draw = ImageDraw.Draw(image)
     try:
@@ -434,7 +434,10 @@ def generate_banner(
             banner_size[0] - scaled_image.height - 50,
         )
     else:
-        image_position = int(banner_size[1] * 0.75), int(banner_size[0] * 0.75)
+        image_position = (
+            banner_size[1] - scaled_image.width,
+            banner_size[0] - scaled_image.height,
+        )
 
     # Объединение изображений
     final_image = combine_images(background, scaled_image, image_position)
