@@ -3,6 +3,9 @@ import torch
 from diffusers import AutoPipelineForText2Image
 from PIL import Image, ImageDraw, ImageFont
 from rembg import remove
+from torch import autocast
+from functools import lru_cache
+
 
 pipeline = AutoPipelineForText2Image.from_pretrained(
     "kandinsky-community/kandinsky-2-1", torch_dtype=torch.float16
@@ -26,18 +29,20 @@ recommendations = {
 
 
 # Функция для генерации изображения
+@lru_cache(maxsize=16)
 def generate_raw_image(cluster):
     prompt = f"3d image of {recommendations[cluster]}, cinematic, moody white lighting, official"
     negative_prompt = "low quality, bad quality, funny, detailed"
-    image = pipeline(
-        prompt=prompt,
-        negative_prompt=negative_prompt,
-        prior_guidance_scale=1.0,
-        guidance_scale=4.0,
-        height=768,
-        width=768,
-    ).images[0]
-    return image
+    with autocast("cuda"):
+        image = pipeline(
+            prompt=prompt,
+            negative_prompt=negative_prompt,
+            prior_guidance_scale=1.0,
+            guidance_scale=4.0,
+            height=768,
+            width=768,
+        ).images[0]
+        return image
 
 
 # Функция для удаления фона
