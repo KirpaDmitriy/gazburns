@@ -47,7 +47,9 @@ async def get_case(case_id: str, username: str) -> dict:
     async with async_pg_session() as session:
         case = (
             await session.execute(
-                select(CaseTable.id, CaseTable.images, CaseTable.meta_information).where(id=case_id, username=username)
+                select(
+                    CaseTable.id, CaseTable.images, CaseTable.meta_information
+                ).where(CaseTable.id == case_id, CaseTable.username == username)
             )
         ).one_or_none()
         if case:
