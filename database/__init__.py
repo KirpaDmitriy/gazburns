@@ -47,12 +47,16 @@ async def get_case(case_id: str, username: str) -> dict:
     async with async_pg_session() as session:
         case = (
             await session.execute(
-                select(CaseTable).where(id=case_id, username=username)
+                select(CaseTable.id, CaseTable.images, CaseTable.meta_information).where(id=case_id, username=username)
             )
         ).one_or_none()
-        return {
-            "": None,
-        }
+        if case:
+            return {
+                "id": case[0],
+                "images": case[1],
+                "meta_information": case[2],
+            }
+        return {}
 
 
 async def get_cases() -> list[Case]:
