@@ -393,7 +393,7 @@ async def add_text_to_image(image, title: str, subtitle: str, banner_size, filen
             draw.text(position, title, font=font, fill="white")
         if subtitle:
             draw.text(
-                (position[0], position[1] + font_size * 2),
+                (position[0], position[1] + font_size),
                 subtitle,
                 font=sub_font,
                 fill="white",
