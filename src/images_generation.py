@@ -101,7 +101,7 @@ def generate_banner(cluster: str, filename: str, product=None) -> None:
     final_image = combine_images(
         gradient_background, scaled_image, (1050, 20)
     )  # Позиция может быть скорректирована
-    final_image.save(f"{filename}.png")
+    final_image.save(f"pictures/{filename}.png")
     # Добавление текста на изображение
     # random_text_key = random.choice(list(texts.keys()))
     # random_text = texts[random_text_key]

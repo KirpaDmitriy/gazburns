@@ -14,7 +14,7 @@ async def extract_case(params: GenerationParams) -> Case:
         images=[
             {
                 "id": file_id,
-                "src": f"{os.environ['APP_HOST']}/{os.environ['IMAGES_PATH']}/{filename}.png",
+                "src": f"{os.environ['FS_HOST']}/{filename}.png",
             },
         ],
         meta_information=params,

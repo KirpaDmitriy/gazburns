@@ -13,6 +13,7 @@ async_pg_session = sessionmaker(
                 user=os.environ["DATABASE_USER"],
                 password=os.environ["DATABASE_PASSWORD"],
                 host=os.environ["DATABASE_HOST"],
+                port=os.environ["DATABASE_PORT"],
                 path=f"/{os.environ['DATABASE_NAME']}",
             )
         ),
