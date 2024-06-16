@@ -60,4 +60,4 @@ async def add_text(params: TextParams, current_user: str = Depends(get_current_u
     except Exception as exep:
         print(f"Saving case in /add_text died: {exep}")
 
-    return Case(**case_as_dict)
+    return case_as_dict
