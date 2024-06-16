@@ -367,7 +367,7 @@ def generate_position(banner_size: tuple[int, int]) -> tuple[int, int]:
     elif banner_size == (640, 1160):
         text_position = (50, banner_size[0] // 2 - 50)
     else:
-        text_position = (10, 10)
+        text_position = (50, 50)
     return text_position
 
 
@@ -393,7 +393,7 @@ async def add_text_to_image(image, title: str, subtitle: str, banner_size, filen
             draw.text(position, title, font=font, fill="white")
         if subtitle:
             draw.text(
-                (position[0] + font_size * 2, position[1] + font_size * 2),
+                (position[0], position[1] + font_size * 2),
                 subtitle,
                 font=sub_font,
                 fill="white",
