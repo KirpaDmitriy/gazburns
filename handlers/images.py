@@ -64,7 +64,9 @@ async def add_text(params: TextParams, current_user: str = Depends(get_current_u
 
         file_id = str(uuid.uuid4())
         filename = f"text_{changed_image_id}_conv_to_{file_id}"
-        await add_text_to_image(image, params.title, filename)
+        await add_text_to_image(
+            image, params.title, (params.height, params.width), filename
+        )
 
         case_as_dict["images"].append(
             {
