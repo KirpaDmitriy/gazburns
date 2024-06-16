@@ -9,4 +9,4 @@ router = APIRouter()
 
 @router.get("/cases", response_model=list[Case])
 async def cases(current_user: str = Depends(get_current_user)):
-    return await get_cases()
+    return await get_cases(username=current_user)

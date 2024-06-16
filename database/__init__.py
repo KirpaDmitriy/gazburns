@@ -1,6 +1,6 @@
 from sqlalchemy import insert, select
 
-from models import Case, general_case
+from models import Case
 
 from .connection import async_pg_session
 from .tables import Case as CaseTable
@@ -60,5 +60,21 @@ async def get_case(case_id: str, username: str) -> dict | None:
             }
 
 
-async def get_cases() -> list[Case]:
-    return [general_case, general_case, general_case]
+async def get_cases(username: str) -> list[dict]:
+    async with async_pg_session() as session:
+        user_cases = (
+            (
+                await session.execute(
+                    select(CaseTable).where(CaseTable.username == username)
+                )
+            )
+            .scalars()
+            .all()
+        )
+        print(user_cases)
+        field_names = [field["name"] for field in Case.schema()["properties"]]
+        print(field_names)
+        return [
+            {column.name: getattr(case, column.name) for column in field_names}
+            for case in user_cases
+        ]
