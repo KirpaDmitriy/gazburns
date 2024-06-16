@@ -324,7 +324,7 @@ def create_gradient_background(color1, color2, width, height):
 # Функция для генерации изображения
 def generate_raw_image(cluster):
     objects = get_random_objects(cluster)
-    prompt = f"{', '.join(objects)}, 3d, cinematic, blue moody lighting, realistic, official, big, solid white background, blue theme, banking thematics, colourful money, golden coins"
+    prompt = f"{', '.join(objects)}, 3d, cinematic, blue moody lighting, realistic, official, big, solid white background, colourful, blue theme, banking thematics"
     negative_prompt = "low quality, bad quality, cartoon, futuristic"
     with autocast("cuda"):
         image = pipeline(
