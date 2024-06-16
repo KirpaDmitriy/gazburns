@@ -1,0 +1,34 @@
+.container {
+  min-height: 100%;
+  width: 100%;
+  padding: 80px 160px;
+  background-color: #f4f6fa;
+}
+
+.table {
+  display: inline-grid;
+  height: 100%;
+  width: 100%;
+  padding: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 170px));
+  grid-gap: 32px;
+  border-radius: 32px;
+  align-items: center;
+  justify-content: flex-starte;
+  background-color: #fff;
+}
+
+.link {
+  display: contents;
+  color: #fff;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+@media (max-width: 1300px) {
+  .container {
+    padding: 80px 80px;
+  }
+}

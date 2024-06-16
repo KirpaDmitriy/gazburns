@@ -1,0 +1,21 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 26px 160px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #00487c;
+  background-color: #DCE2F0;
+}
+
+.logo {
+  width: 190px;
+}
+
+@media (max-width: 1300px) {
+  .container {
+    padding: 26px 80px;
+  }
+}
