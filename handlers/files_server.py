@@ -9,8 +9,8 @@ router = APIRouter()
 
 
 @router.get("/files/{file_path:path}")
-async def read_file(current_user: str = Depends(get_current_user)):
-    file_location = os.environ["PICTURES_FOLDER"]
+async def read_file(file_path: str, current_user: str = Depends(get_current_user)):
+    file_location = f"{os.environ['PICTURES_FOLDER']}/{file_path}"
     if os.path.exists(file_location):
         return FileResponse(file_location)
     else:
