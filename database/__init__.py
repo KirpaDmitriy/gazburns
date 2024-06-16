@@ -72,7 +72,4 @@ async def get_cases(username: str) -> list[dict]:
             .all()
         )
         print(user_cases, Case.schema()["properties"])
-        return [
-            {column.name: getattr(case, column.name) for column in Case.schema()["properties"]}
-            for case in user_cases
-        ]
+        return []
