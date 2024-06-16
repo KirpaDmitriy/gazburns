@@ -104,7 +104,7 @@ async def add_text(params: RegenParams, current_user: str = Depends(get_current_
     file_id = str(uuid.uuid4())
     filename = f"picture_{file_id}"
     await generate_image(
-        random.choice(params.segment),
+        random.choice(case_as_dict["meta_information"]["segment"]),
         filename=filename,
         banner_size=(
             case_as_dict["meta_information"]["height"],
