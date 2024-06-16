@@ -386,12 +386,18 @@ async def add_text_to_image(image, title: str, subtitle: str, banner_size, filen
             sub_font = ImageFont.truetype(os.environ["FONT_PATH"], int(font_size / 1.5))
         except Exception:
             log.warning("Loading custom font died")
+            font_size = 20
             font = ImageFont.load_default()  # Шрифт по умолчанию
             sub_font = ImageFont.load_default()  # Шрифт по умолчанию
         if title:
             draw.text(position, title, font=font, fill="white")
         if subtitle:
-            draw.text(position, subtitle, font=sub_font, fill="white")
+            draw.text(
+                (position[0] + font_size * 2, position[1] + font_size * 2),
+                subtitle,
+                font=sub_font,
+                fill="white",
+            )
         image.save(f"{os.environ['PICTURES_FOLDER']}/{filename}.png")
     except UnicodeEncodeError:
         # Если возникла ошибка, значит текст содержит символы, не поддерживаемые шрифтом по умолчанию
