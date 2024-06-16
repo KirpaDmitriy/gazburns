@@ -43,7 +43,7 @@ async def add_image_to_case(case_id: str, images: list[str]) -> None:
             await session.commit()
 
 
-async def get_case(case_id: str, username: str) -> dict:
+async def get_case(case_id: str, username: str) -> dict | None:
     async with async_pg_session() as session:
         case = (
             await session.execute(
@@ -58,7 +58,6 @@ async def get_case(case_id: str, username: str) -> dict:
                 "images": case[1],
                 "meta_information": case[2],
             }
-        return {}
 
 
 async def get_cases() -> list[Case]:

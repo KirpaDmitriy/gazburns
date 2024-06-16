@@ -36,7 +36,8 @@ async def generate_image(
 async def add_text(params: TextParams, current_user: str = Depends(get_current_user)):
     case_as_dict = await get_case(case_id=params.case_id, username=current_user)
 
-    image_url = case_as_dict["images"][-1]
+    print(f"Found case in /add_text: {case_as_dict}")
+    image_url = case_as_dict["images"][-1]["src"]
     async with httpx.AsyncClient() as client:
         response = await client.get(image_url)
         image = Image.open(BytesIO(response.content))
