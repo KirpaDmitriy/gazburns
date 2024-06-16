@@ -5,7 +5,7 @@ from fastapi import Header, HTTPException, status
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-from database import get_user
+from database import get_user, save_user
 from src.logger import app_logger
 
 log = app_logger(__name__)
@@ -16,6 +16,10 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+async def register_user(username: str, password: str) -> None:
+    await save_user(username=username, hashed_password=pwd_context.hash(password))
 
 
 def verify_password(plain_password, hashed_password):

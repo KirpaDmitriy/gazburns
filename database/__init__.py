@@ -29,6 +29,12 @@ async def get_user(username: str) -> dict:
         }
 
 
+async def save_user(**kwargs) -> None:
+    async with async_pg_session() as session:
+        await session.execute(insert(User).values(**kwargs))
+        await session.commit()
+
+
 async def save_case(**kwargs) -> None:
     async with async_pg_session() as session:
         await session.execute(insert(CaseTable).values(**kwargs))
