@@ -20,7 +20,7 @@ class GenerationParams(BaseModel):
     audience: str | None = None
     width: int
     height: int
-    segment: str
+    segment: list[str]
 
     def to_dict(self) -> dict:
         return {

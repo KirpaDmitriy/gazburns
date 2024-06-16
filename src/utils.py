@@ -1,4 +1,5 @@
 import os
+import random
 import uuid
 
 from models import Case, GenerationParams
@@ -12,7 +13,9 @@ async def extract_case(params: GenerationParams) -> Case:
     file_id = str(uuid.uuid4())
     filename = f"picture_{file_id}"
     await generate_image(
-        params.segment, filename=filename, banner_size=(params.height, params.width)
+        random.choice(params.segment),
+        filename=filename,
+        banner_size=(params.height, params.width),
     )
     return Case(
         id=str(uuid.uuid4()),
