@@ -11,9 +11,9 @@ from database import add_image_to_case, get_case, save_case
 from models import Case, GenerationParams, RegenParams, TextParams
 from src.access import get_current_user
 from src.images_generation import add_text_to_image
+from src.images_generation import generate_image as regenerate_raw_image
 from src.logger import app_logger
 from src.utils import extract_case
-from src.images_generation import generate_image as regenerate_raw_image
 
 log = app_logger(__name__)
 
@@ -97,7 +97,9 @@ async def add_text(params: TextParams, current_user: str = Depends(get_current_u
 
 
 @router.post("/regenerate", response_model=Case)
-async def regenerate_image(params: RegenParams, current_user: str = Depends(get_current_user)):
+async def regenerate_image(
+    params: RegenParams, current_user: str = Depends(get_current_user)
+):
     case_as_dict = await get_case(case_id=params.case_id, username=current_user)
 
     log.info(f"Found case in /add_text: {case_as_dict}")
