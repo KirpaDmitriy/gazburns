@@ -5,7 +5,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 model = AutoModelForCausalLM.from_pretrained(
-    "Qwen/Qwen2-7B-Instruct", torch_dtype="auto", device_map="auto"
+    "Qwen/Qwen2-7B-Instruct", torch_dtype="auto"  # , device_map="auto"
 ).to("cuda")
 
 tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2-7B-Instruct")
