@@ -4,9 +4,9 @@ import torch
 # from torch import autocast
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-model = None  # AutoModelForCausalLM.from_pretrained(
-#     "Qwen/Qwen2-7B-Instruct", torch_dtype="auto"  # , device_map="auto"
-# ).to("cuda")
+model = AutoModelForCausalLM.from_pretrained(
+    "Qwen/Qwen2-7B-Instruct", torch_dtype="auto"  # , device_map="auto"
+)  # .to("cuda")
 
 tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2-7B-Instruct")
 
