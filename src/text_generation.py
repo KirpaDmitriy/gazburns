@@ -1,3 +1,6 @@
+from asyncio import gather
+
+from torch import autocast
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 model = AutoModelForCausalLM.from_pretrained(
@@ -6,7 +9,7 @@ model = AutoModelForCausalLM.from_pretrained(
 tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2-7B-Instruct")
 
 
-def generate_func(message: str) -> str:
+async def generate_func(message: str) -> str:
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": message},
@@ -16,7 +19,9 @@ def generate_func(message: str) -> str:
     )
     model_inputs = tokenizer([text], return_tensors="pt").to("cuda")
 
-    generated_ids = model.generate(model_inputs.input_ids, max_new_tokens=512)
+    with autocast("cuda"):
+        generated_ids = model.generate(model_inputs.input_ids, max_new_tokens=512)
+
     generated_ids = [
         output_ids[len(input_ids) :]
         for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
@@ -59,8 +64,9 @@ def generate_product_logo(product_desc: str) -> tuple[str, str]:
             product = elem
             break
 
-    message = f"Придумай короткий и интересный слоган, который будет использован на баннере для рекламы  продукта: {product} в банке"
-    name_banner = generate_func(message)
-    message = f"Дано описание продукта :{product_desc}. Представь, что ты дизайнер и тебе необходимо сделать рекламу этого продукта. Придумай короткий слоган для рекламы, чтобы передать все важные условия продукта."
-    new_desc = generate_func(message)
+    message_title = f"Придумай короткий и интересный слоган, который будет использован на баннере для рекламы  продукта: {product} в банке"
+    message_description = f"Дано описание продукта :{product_desc}. Представь, что ты дизайнер и тебе необходимо сделать рекламу этого продукта. Придумай короткий слоган для рекламы, чтобы передать все важные условия продукта."
+    name_banner, new_desc = gather(
+        generate_func(message_title), generate_func(message_description)
+    )
     return name_banner, new_desc
