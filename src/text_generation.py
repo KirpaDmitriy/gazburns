@@ -21,8 +21,8 @@ async def generate_func(message: str) -> str:
     )
     model_inputs = tokenizer([text], return_tensors="pt").to("cuda")
 
-    with autocast("cuda"):
-        generated_ids = model.generate(model_inputs.input_ids, max_new_tokens=512)
+    # with autocast("cuda"):
+    generated_ids = model.generate(model_inputs.input_ids, max_new_tokens=512)
 
     generated_ids = [
         output_ids[len(input_ids) :]
