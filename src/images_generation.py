@@ -322,9 +322,12 @@ def create_gradient_background(color1, color2, width, height):
 
 
 # Функция для генерации изображения
-def generate_raw_image(cluster):
+def generate_raw_image(cluster, product_description: str | None = None):
     objects = get_random_objects(cluster)
-    prompt = f"{', '.join(objects)}, 3d, cinematic, blue moody lighting, realistic, official, big, solid white background, colourful with blue elements, banking thematics"
+    objects_prompt = ", ".join(objects)
+    prompt = f"{objects_prompt}, 3d, cinematic, blue moody lighting, realistic, official, big, solid white background, colourful with blue elements, banking thematics"
+    if product_description:
+        prompt += f" for advertising the following product: {product_description}"
     negative_prompt = "low quality, bad quality, cartoon, futuristic"
     with autocast("cuda"):
         image = pipeline(
@@ -423,10 +426,13 @@ def create_background(cluster, width, height):
 
 # Основная функция для генерации баннера
 def generate_banner(
-    cluster: str, filename: str, banner_size: tuple[int, int], product=None
+    cluster: str,
+    filename: str,
+    banner_size: tuple[int, int],
+    product: str | None = None,
 ) -> None:
     # Генерация нового изображения
-    generated_image = generate_raw_image(cluster)
+    generated_image = generate_raw_image(cluster, product_description=product)
 
     # Удаление фона из сгенерированного изображения
     generated_image_nobg = remove_background(generated_image)
@@ -466,6 +472,11 @@ def generate_banner(
 
 # Функция для генерации баннера с учетом извлечённого классификатором кластера
 async def generate_image(
-    segment: str, filename: str, banner_size: tuple[int, int]
+    segment: str,
+    filename: str,
+    banner_size: tuple[int, int],
+    product: str | None = None,
 ) -> None:
-    generate_banner(segment, banner_size=banner_size, filename=filename)
+    generate_banner(
+        segment, product=product, banner_size=banner_size, filename=filename
+    )

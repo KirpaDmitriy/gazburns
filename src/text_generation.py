@@ -8,7 +8,7 @@ model = AutoModelForCausalLM.from_pretrained(
     "Qwen/Qwen2-7B-Instruct", torch_dtype="auto"  # , device_map="auto"
 ).to("cpu")
 
-tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2-7B-Instruct", device='cpu')
+tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2-7B-Instruct", device="cpu")
 
 torch.backends.cuda.enable_mem_efficient_sdp(False)
 torch.backends.cuda.enable_flash_sdp(False)
@@ -30,7 +30,7 @@ async def generate_func(message: str) -> str:
     generated_ids = model.generate(model_inputs.input_ids, max_new_tokens=512)
 
     generated_ids = [
-        output_ids[len(input_ids):]
+        output_ids[len(input_ids) :]
         for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
     ]
 

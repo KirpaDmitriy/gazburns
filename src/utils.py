@@ -14,6 +14,7 @@ async def extract_case(params: GenerationParams) -> Case:
     filename = f"picture_{file_id}"
     await generate_image(
         random.choice(params.segment),
+        product=params.product,
         filename=filename,
         banner_size=(params.height, params.width),
     )
