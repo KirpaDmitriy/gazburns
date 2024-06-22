@@ -1,12 +1,12 @@
 from asyncio import gather
 
 import torch
-from torch import autocast
+# from torch import autocast
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 model = AutoModelForCausalLM.from_pretrained(
-    "Qwen/Qwen2-7B-Instruct", torch_dtype="auto"
-).to("cuda")
+    "Qwen/Qwen2-7B-Instruct", torch_dtype="auto", device_map="auto"
+)  # .to("cuda")
 
 tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2-7B-Instruct")
 
@@ -28,7 +28,7 @@ async def generate_func(message: str) -> str:
     generated_ids = model.generate(model_inputs.input_ids, max_new_tokens=512)
 
     generated_ids = [
-        output_ids[len(input_ids) :]
+        output_ids[len(input_ids):]
         for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
     ]
 
