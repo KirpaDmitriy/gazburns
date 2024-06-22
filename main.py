@@ -25,4 +25,4 @@ app.add_middleware(
 # app.include_router(history_router)
 app.include_router(images_router)
 # app.include_router(slogans_router)
-# app.include_router(files_router)
+app.include_router(files_router)
