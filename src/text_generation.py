@@ -22,7 +22,7 @@ async def generate_func(message: str) -> str:
     text = tokenizer.apply_chat_template(
         messages, tokenize=False, add_generation_prompt=True
     )
-    model_inputs = tokenizer([text], return_tensors="pt").to("cuda")
+    model_inputs = tokenizer([text], return_tensors="pt")  # .to("cuda")
 
     # with autocast("cuda"):
     generated_ids = model.generate(model_inputs.input_ids, max_new_tokens=512)
