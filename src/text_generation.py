@@ -8,7 +8,7 @@ model = AutoModelForCausalLM.from_pretrained(
     "Qwen/Qwen2-7B-Instruct", torch_dtype="auto"  # , device_map="auto"
 ).to("cpu")
 
-tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2-7B-Instruct").to("cpu")
+tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2-7B-Instruct", device='cpu')
 
 torch.backends.cuda.enable_mem_efficient_sdp(False)
 torch.backends.cuda.enable_flash_sdp(False)
