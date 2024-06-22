@@ -10,8 +10,8 @@ from PIL import Image
 from database import add_image_to_case, get_case, save_case
 from models import Case, GenerationParams, RegenParams, TextParams
 from src.access import get_current_user
-# from src.images_generation import add_text_to_image
-# from src.images_generation import generate_image as regenerate_raw_image
+from src.images_generation import add_text_to_image
+from src.images_generation import generate_image as regenerate_raw_image
 from src.logger import app_logger
 from src.utils import extract_case
 
@@ -37,104 +37,104 @@ async def generate_image(
     return case
 
 
-# @router.post("/add_text", response_model=Case)
-# async def add_text(params: TextParams, current_user: str = Depends(get_current_user)):
-#     case_as_dict = await get_case(case_id=params.case_id, username=current_user)
-#
-#     log.info(f"Found case in /add_text: {case_as_dict}")
-#
-#     # Получаем id и сслылку на исходную картинку
-#     changed_image = params.picture_id
-#     changed_image_id = changed_image.split("_conv_to_")[0]
-#     changed_image_url = f"{os.environ['FS_HOST']}/picture_{changed_image_id}.png"
-#
-#     if not params.title and not params.subtitle:
-#         log.info(f"Removing text from image")
-#         case_as_dict["images"].append(
-#             {
-#                 "id": changed_image_id,
-#                 "src": f"{os.environ['FS_HOST']}/picture_{changed_image_id}.png",
-#             }
-#         )
-#     else:
-#         log.info(f"Adding text to image")
-#
-#         # Запрашиваем исходную картинку
-#         async with httpx.AsyncClient() as client:
-#             response = await client.get(changed_image_url)
-#             image = Image.open(BytesIO(response.content))
-#
-#         file_id = str(uuid.uuid4())
-#         filename = f"text_{changed_image_id}_conv_to_{file_id}"
-#         await add_text_to_image(
-#             image,
-#             params.title,
-#             params.subtitle,
-#             (
-#                 case_as_dict["meta_information"]["height"],
-#                 case_as_dict["meta_information"]["width"],
-#             ),
-#             filename,
-#         )
-#
-#         case_as_dict["images"].append(
-#             {
-#                 "id": f"{changed_image_id}_conv_to_{file_id}",
-#                 "src": f"{os.environ['FS_HOST']}/{filename}.png",
-#                 "title": params.title,
-#                 "subtitle": params.subtitle,
-#             }
-#         )
-#
-#     log.info(f"Case as dict: {case_as_dict}")
-#
-#     try:
-#         await add_image_to_case(
-#             case_id=case_as_dict["id"], images=case_as_dict["images"]
-#         )
-#     except Exception as exep:
-#         log.error(f"Saving case in /add_text died: {exep}")
-#
-#     case_as_dict["images"] = case_as_dict["images"][::-1]
-#
-#     return case_as_dict
-#
-#
-# @router.post("/regenerate", response_model=Case)
-# async def regenerate_image(
-#     params: RegenParams, current_user: str = Depends(get_current_user)
-# ):
-#     case_as_dict = await get_case(case_id=params.case_id, username=current_user)
-#
-#     log.info(f"Found case in /add_text: {case_as_dict}")
-#
-#     file_id = str(uuid.uuid4())
-#     filename = f"picture_{file_id}"
-#     await regenerate_raw_image(
-#         random.choice(case_as_dict["meta_information"]["segment"]),
-#         filename=filename,
-#         banner_size=(
-#             case_as_dict["meta_information"]["height"],
-#             case_as_dict["meta_information"]["width"],
-#         ),
-#     )
-#
-#     case_as_dict["images"].append(
-#         {
-#             "id": file_id,
-#             "src": f"{os.environ['FS_HOST']}/{filename}.png",
-#         }
-#     )
-#
-#     log.info(f"Case as dict: {case_as_dict}")
-#
-#     try:
-#         await add_image_to_case(
-#             case_id=case_as_dict["id"], images=case_as_dict["images"]
-#         )
-#     except Exception as exep:
-#         log.error(f"Saving case in /add_text died: {exep}")
-#
-#     case_as_dict["images"] = case_as_dict["images"][::-1]
-#
-#     return case_as_dict
+@router.post("/add_text", response_model=Case)
+async def add_text(params: TextParams, current_user: str = Depends(get_current_user)):
+    case_as_dict = await get_case(case_id=params.case_id, username=current_user)
+
+    log.info(f"Found case in /add_text: {case_as_dict}")
+
+    # Получаем id и сслылку на исходную картинку
+    changed_image = params.picture_id
+    changed_image_id = changed_image.split("_conv_to_")[0]
+    changed_image_url = f"{os.environ['FS_HOST']}/picture_{changed_image_id}.png"
+
+    if not params.title and not params.subtitle:
+        log.info(f"Removing text from image")
+        case_as_dict["images"].append(
+            {
+                "id": changed_image_id,
+                "src": f"{os.environ['FS_HOST']}/picture_{changed_image_id}.png",
+            }
+        )
+    else:
+        log.info(f"Adding text to image")
+
+        # Запрашиваем исходную картинку
+        async with httpx.AsyncClient() as client:
+            response = await client.get(changed_image_url)
+            image = Image.open(BytesIO(response.content))
+
+        file_id = str(uuid.uuid4())
+        filename = f"text_{changed_image_id}_conv_to_{file_id}"
+        await add_text_to_image(
+            image,
+            params.title,
+            params.subtitle,
+            (
+                case_as_dict["meta_information"]["height"],
+                case_as_dict["meta_information"]["width"],
+            ),
+            filename,
+        )
+
+        case_as_dict["images"].append(
+            {
+                "id": f"{changed_image_id}_conv_to_{file_id}",
+                "src": f"{os.environ['FS_HOST']}/{filename}.png",
+                "title": params.title,
+                "subtitle": params.subtitle,
+            }
+        )
+
+    log.info(f"Case as dict: {case_as_dict}")
+
+    try:
+        await add_image_to_case(
+            case_id=case_as_dict["id"], images=case_as_dict["images"]
+        )
+    except Exception as exep:
+        log.error(f"Saving case in /add_text died: {exep}")
+
+    case_as_dict["images"] = case_as_dict["images"][::-1]
+
+    return case_as_dict
+
+
+@router.post("/regenerate", response_model=Case)
+async def regenerate_image(
+    params: RegenParams, current_user: str = Depends(get_current_user)
+):
+    case_as_dict = await get_case(case_id=params.case_id, username=current_user)
+
+    log.info(f"Found case in /add_text: {case_as_dict}")
+
+    file_id = str(uuid.uuid4())
+    filename = f"picture_{file_id}"
+    await regenerate_raw_image(
+        random.choice(case_as_dict["meta_information"]["segment"]),
+        filename=filename,
+        banner_size=(
+            case_as_dict["meta_information"]["height"],
+            case_as_dict["meta_information"]["width"],
+        ),
+    )
+
+    case_as_dict["images"].append(
+        {
+            "id": file_id,
+            "src": f"{os.environ['FS_HOST']}/{filename}.png",
+        }
+    )
+
+    log.info(f"Case as dict: {case_as_dict}")
+
+    try:
+        await add_image_to_case(
+            case_id=case_as_dict["id"], images=case_as_dict["images"]
+        )
+    except Exception as exep:
+        log.error(f"Saving case in /add_text died: {exep}")
+
+    case_as_dict["images"] = case_as_dict["images"][::-1]
+
+    return case_as_dict
