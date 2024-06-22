@@ -17,7 +17,7 @@ async def slogans(params: RegenParams, current_user: str = Depends(get_current_u
 
     log.info(f"Found case in /slogans: {case_as_dict}")
 
-    title, description = generate_product_logo(
+    title, description = await generate_product_logo(
         case_as_dict["meta_information"]["product"]
     )
 

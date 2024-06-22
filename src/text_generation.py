@@ -31,7 +31,7 @@ async def generate_func(message: str) -> str:
     return response
 
 
-def generate_product_logo(product_desc: str) -> tuple[str, str]:
+async def generate_product_logo(product_desc: str) -> tuple[str, str]:
     # получаем по списку
     product = "банковский продукт"
     product_desc = product_desc.lower()
