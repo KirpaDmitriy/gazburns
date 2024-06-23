@@ -495,8 +495,29 @@ def get_size_text(draw, position, text, font):
 
 
 def add_text_to_image(
-    image, title: str, subtitle: str, banner_size, filename, image_position
+    image, title: str, subtitle: str, banner_size, filename, object_size: tuple[int, int]
 ):
+    if banner_size == (216, 1184):
+        image_position = (
+            banner_size[1] - object_size[0] - 50,
+            (banner_size[0] - object_size[1]) // 2,
+        )
+    elif banner_size == (380, 380):
+        image_position = (
+            (banner_size[1] - object_size[0]) // 2,
+            (banner_size[0] - object_size[1]) // 2 + 50,
+        )
+    elif banner_size == (640, 1160):
+        image_position = (
+            banner_size[1] - object_size[0] - 50,
+            banner_size[0] - object_size[1] - 50,
+        )
+    else:
+        image_position = (
+            banner_size[1] - object_size[0],
+            banner_size[0] - object_size[1],
+        )
+
     position = generate_position(banner_size)
     draw = ImageDraw.Draw(image)
     try:

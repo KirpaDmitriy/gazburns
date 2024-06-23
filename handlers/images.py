@@ -70,6 +70,13 @@ async def add_text(params: TextParams, current_user: str = Depends(get_current_u
             response = await client.get(changed_image_url)
             image = Image.open(BytesIO(response.content))
 
+        object_size = (250, 250)
+        if object_url:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(object_url)
+                object_image = Image.open(BytesIO(response.content))
+                object_size = object_image.size
+
         file_id = str(uuid.uuid4())
         filename = f"text_{changed_image_id}_conv_to_{file_id}"
         await add_text_to_image(
@@ -81,6 +88,7 @@ async def add_text(params: TextParams, current_user: str = Depends(get_current_u
                 case_as_dict["meta_information"]["width"],
             ),
             filename,
+            object_size,
         )
 
         case_as_dict["images"].append(
