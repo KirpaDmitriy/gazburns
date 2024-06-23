@@ -494,7 +494,7 @@ def get_size_text(draw, position, text, font):
     return text_width, text_height
 
 
-def add_text_to_image(
+async def add_text_to_image(
     image, title: str, subtitle: str, banner_size, filename, object_size: tuple[int, int]
 ):
     if banner_size == (216, 1184):
