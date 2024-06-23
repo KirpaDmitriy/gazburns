@@ -393,6 +393,7 @@ async def add_text_to_image(image, title: str, subtitle: str, banner_size, filen
             )
         except Exception:
             log.warning("Loading custom font died")
+            log.info(f"{20} " * 100)
             font_size = 20
             font = ImageFont.load_default()  # Шрифт по умолчанию
             sub_font = ImageFont.load_default()  # Шрифт по умолчанию
