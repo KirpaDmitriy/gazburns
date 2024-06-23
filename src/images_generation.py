@@ -328,7 +328,8 @@ def generate_raw_image(cluster, product_description: str | None = None):
     prompt = f"{objects_prompt}, 3d, cinematic, blue moody lighting, realistic, official, big, solid white background, colourful with blue elements, banking thematics"
     if product_description:
         prompt += f" for advertising the following product: {product_description}"
-    negative_prompt = "low quality, bad quality, cartoon, futuristic"
+    negative_prompt = "low quality, bad quality, cartoon, futuristic, text"
+    log.info("Prompt: %s. Negative prompt: %s", prompt, negative_prompt)
     with autocast("cuda"):
         image = pipeline(
             prompt=prompt,
@@ -385,8 +386,10 @@ async def add_text_to_image(image, title: str, subtitle: str, banner_size, filen
     try:
         try:
             font_size = calc_font_size(banner_size)
-            font = ImageFont.truetype(os.environ["FONT_PATH"], int(font_size))
-            sub_font = ImageFont.truetype(os.environ["FONT_PATH"], int(font_size / 1.5))
+            font = ImageFont.truetype(os.environ["TITLE_FONT_PATH"], int(font_size))
+            sub_font = ImageFont.truetype(
+                os.environ["DESCRIPTION_FONT_PATH"], int(font_size) - 6
+            )
         except Exception:
             log.warning("Loading custom font died")
             font_size = 20
