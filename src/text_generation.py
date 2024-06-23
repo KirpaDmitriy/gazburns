@@ -72,7 +72,7 @@ async def generate_product_logo(product_desc: str) -> tuple[str, str]:
             break
 
     message_title = f"Придумай короткий и интересный слоган, который будет использован на баннере для рекламы  продукта: {product} в банке"
-    message_description = f"Дано описание продукта :{product_desc}. Представь, что ты дизайнер и тебе необходимо сделать рекламу этого продукта. Придумай короткий слоган для рекламы, чтобы передать все важные условия продукта."
+    message_description = f"Дано описание продукта: {product_desc}. Представь, что ты дизайнер и тебе необходимо сделать рекламу этого продукта. Придумай короткий слоган для рекламы, чтобы передать все важные условия продукта. Слоган должен быть не больше 10 слов"
     name_banner, new_desc = await gather(
         generate_func(message_title), generate_func(message_description)
     )

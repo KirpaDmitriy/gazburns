@@ -48,12 +48,18 @@ async def add_text(params: TextParams, current_user: str = Depends(get_current_u
     changed_image_id = changed_image.split("_conv_to_")[0]
     changed_image_url = f"{os.environ['FS_HOST']}/picture_{changed_image_id}.png"
 
+    object_url = None
+    for img in case_as_dict["images"]:
+        if img.get("id") == params.picture_id:
+            object_url = img.get("object")
+
     if not params.title and not params.subtitle:
         log.info(f"Removing text from image")
         case_as_dict["images"].append(
             {
                 "id": changed_image_id,
                 "src": f"{os.environ['FS_HOST']}/picture_{changed_image_id}.png",
+                "object": object_url,
             }
         )
     else:
@@ -81,6 +87,7 @@ async def add_text(params: TextParams, current_user: str = Depends(get_current_u
             {
                 "id": f"{changed_image_id}_conv_to_{file_id}",
                 "src": f"{os.environ['FS_HOST']}/{filename}.png",
+                "object": object_url,
                 "title": params.title,
                 "subtitle": params.subtitle,
             }
@@ -123,6 +130,7 @@ async def regenerate_image(
         {
             "id": file_id,
             "src": f"{os.environ['FS_HOST']}/{filename}.png",
+            "object": f"{os.environ['FS_HOST']}/{filename}_object.png",
         }
     )
 

@@ -393,7 +393,6 @@ async def add_text_to_image(image, title: str, subtitle: str, banner_size, filen
             )
         except Exception as error:
             log.warning("Loading custom font died with %s", error)
-            log.info(f"{20} " * 100)
             font_size = 20
             font = ImageFont.load_default()  # Шрифт по умолчанию
             sub_font = ImageFont.load_default()  # Шрифт по умолчанию
@@ -441,6 +440,7 @@ def generate_banner(
 
     # Удаление фона из сгенерированного изображения
     generated_image_nobg = remove_background(generated_image)
+    generated_image.save(f"{os.environ['PICTURES_FOLDER']}/{filename}_object.png")
 
     # Создание фона
     background = create_background(cluster, banner_size[1], banner_size[0])

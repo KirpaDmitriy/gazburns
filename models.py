@@ -53,6 +53,7 @@ class PictureInfo(BaseModel):
     src: str = Field(..., description="URL файла изображения")
     title: str | None = None
     subtitle: str | None = None
+    object: str | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -60,6 +61,7 @@ class PictureInfo(BaseModel):
             "src": self.src,
             "title": self.title,
             "subtitle": self.subtitle,
+            "object": self.object,
         }
 
 
