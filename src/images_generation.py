@@ -380,38 +380,38 @@ def calc_font_size(banner_size) -> int:
 
 
 # Функция для добавления текста на изображение
-async def add_text_to_image(image, title: str, subtitle: str, banner_size, filename):
-    position = generate_position(banner_size)
-    draw = ImageDraw.Draw(image)
-    try:
-        try:
-            font_size = calc_font_size(banner_size)
-            log.info(f"Font size: {font_size}")
-            font = ImageFont.truetype(os.environ["TITLE_FONT_PATH"], int(font_size))
-            sub_font = ImageFont.truetype(
-                os.environ["DESCRIPTION_FONT_PATH"], int(font_size) - 6
-            )
-        except Exception as error:
-            log.warning("Loading custom font died with %s", error)
-            font_size = 20
-            font = ImageFont.load_default()  # Шрифт по умолчанию
-            sub_font = ImageFont.load_default()  # Шрифт по умолчанию
-        if title:
-            draw.text(position, title, font=font, fill="white")
-        if subtitle:
-            draw.text(
-                (position[0], position[1] + font_size),
-                subtitle,
-                font=sub_font,
-                fill="white",
-            )
-        image.save(f"{os.environ['PICTURES_FOLDER']}/{filename}.png")
-    except UnicodeEncodeError:
-        # Если возникла ошибка, значит текст содержит символы, не поддерживаемые шрифтом по умолчанию
-        log.error(
-            "Ошибка кодировки. Пожалуйста, используйте шрифт, поддерживающий кириллицу."
-        )
-    return image
+# async def add_text_to_image(image, title: str, subtitle: str, banner_size, filename):
+#     position = generate_position(banner_size)
+#     draw = ImageDraw.Draw(image)
+#     try:
+#         try:
+#             font_size = calc_font_size(banner_size)
+#             log.info(f"Font size: {font_size}")
+#             font = ImageFont.truetype(os.environ["TITLE_FONT_PATH"], int(font_size))
+#             sub_font = ImageFont.truetype(
+#                 os.environ["DESCRIPTION_FONT_PATH"], int(font_size) - 6
+#             )
+#         except Exception as error:
+#             log.warning("Loading custom font died with %s", error)
+#             font_size = 20
+#             font = ImageFont.load_default()  # Шрифт по умолчанию
+#             sub_font = ImageFont.load_default()  # Шрифт по умолчанию
+#         if title:
+#             draw.text(position, title, font=font, fill="white")
+#         if subtitle:
+#             draw.text(
+#                 (position[0], position[1] + font_size),
+#                 subtitle,
+#                 font=sub_font,
+#                 fill="white",
+#             )
+#         image.save(f"{os.environ['PICTURES_FOLDER']}/{filename}.png")
+#     except UnicodeEncodeError:
+#         # Если возникла ошибка, значит текст содержит символы, не поддерживаемые шрифтом по умолчанию
+#         log.error(
+#             "Ошибка кодировки. Пожалуйста, используйте шрифт, поддерживающий кириллицу."
+#         )
+#     return image
 
 
 # Функция для создания фона
@@ -485,3 +485,162 @@ async def generate_image(
     generate_banner(
         segment, product=product, banner_size=banner_size, filename=filename
     )
+
+
+def get_size_text(draw, position, text, font):
+    text_bbox = draw.textbbox(position, text, font=font)
+    text_width = text_bbox[2] - text_bbox[0]
+    text_height = text_bbox[3] - text_bbox[1]
+    return text_width, text_height
+
+
+def add_text_to_image(
+    image, title: str, subtitle: str, banner_size, filename, image_position
+):
+    position = generate_position(banner_size)
+    draw = ImageDraw.Draw(image)
+    try:
+        try:
+            if banner_size == (216, 1184):
+                font_size = calc_font_size(banner_size)
+                font = ImageFont.truetype(os.environ["TITLE_FONT_PATH"], int(font_size))
+                text_width, text_height = get_size_text(draw, position, title, font)
+                while text_width > image_position[0] - position[0]:
+                    font_size -= 5
+                    font = ImageFont.truetype(
+                        os.environ["TITLE_FONT_PATH"], int(font_size)
+                    )
+                    text_width, text_height = get_size_text(draw, position, title, font)
+                font_size = calc_font_size(banner_size)
+                sub_font = ImageFont.truetype(
+                    os.environ["DESCRIPTION_FONT_PATH"], int(font_size) - 6
+                )
+
+                text_width, text_height = get_size_text(
+                    draw, position, subtitle, sub_font
+                )
+                while text_width > image_position[0] - position[0]:
+                    font_size -= 5
+                    sub_font = ImageFont.truetype(
+                        os.environ["DESCRIPTION_FONT_PATH"], int(font_size) - 6
+                    )
+                    text_width, text_height = get_size_text(
+                        draw, position, subtitle, sub_font
+                    )
+            elif banner_size == (380, 380):
+                font_size = calc_font_size(banner_size)
+                font = ImageFont.truetype(os.environ["TITLE_FONT_PATH"], int(font_size))
+                text_width, text_height = get_size_text(draw, position, title, font)
+                while text_width > banner_size[1] - 5:
+                    font_size -= 1
+                    font = ImageFont.truetype(
+                        os.environ["TITLE_FONT_PATH"], int(font_size)
+                    )
+                    text_width, text_height = get_size_text(draw, position, title, font)
+
+                font_size = calc_font_size(banner_size)
+                sub_font = ImageFont.truetype(
+                    os.environ["DESCRIPTION_FONT_PATH"], int(font_size) - 6
+                )
+                text_width, text_height = get_size_text(
+                    draw, position, subtitle, sub_font
+                )
+
+                while text_width > banner_size[1] - 5:
+                    font_size -= 1
+                    sub_font = ImageFont.truetype(
+                        os.environ["DESCRIPTION_FONT_PATH"], int(font_size) - 6
+                    )
+                    text_width, text_height = get_size_text(
+                        draw, position, subtitle, sub_font
+                    )
+
+            elif banner_size == (640, 1160):
+                font_size = calc_font_size(banner_size)
+                font = ImageFont.truetype(os.environ["TITLE_FONT_PATH"], int(font_size))
+                text_width, text_height = get_size_text(draw, position, title, font)
+                while text_width > banner_size[1] - 50:
+                    font_size -= 5
+                    font = ImageFont.truetype(
+                        os.environ["TITLE_FONT_PATH"], int(font_size)
+                    )
+                    text_width, text_height = get_size_text(draw, position, title, font)
+
+                font_size = calc_font_size(banner_size)
+                sub_font = ImageFont.truetype(
+                    os.environ["DESCRIPTION_FONT_PATH"], int(font_size) - 6
+                )
+
+                text_width, text_height = get_size_text(
+                    draw, position, subtitle, sub_font
+                )
+                while text_width > image_position[0]:
+                    font_size -= 5
+                    sub_font = ImageFont.truetype(
+                        os.environ["DESCRIPTION_FONT_PATH"], int(font_size) - 6
+                    )
+                    text_width, text_height = get_size_text(
+                        draw, position, subtitle, sub_font
+                    )
+            else:
+                font_size = calc_font_size(banner_size)
+                log.info(f"Font size: {font_size}")
+                font = ImageFont.truetype(os.environ["TITLE_FONT_PATH"], int(font_size))
+                sub_font = ImageFont.truetype(
+                    os.environ["DESCRIPTION_FONT_PATH"], int(font_size) - 6
+                )
+        except Exception as error:
+            log.error("Loading fonts died: %s", error)
+            font_size = 20
+            font = ImageFont.load_default()  # Шрифт по умолчанию
+            sub_font = ImageFont.load_default()  # Шрифт по умолчанию
+
+        if title:
+            if banner_size == (216, 1184):
+                draw.text(position, title, font=font, fill="white")
+            elif banner_size == (640, 1160):
+                draw.text((50, 50), title, font=font, fill="white")
+            elif banner_size == (380, 380):
+                draw.text((5, 5), title, font=font, fill="white")
+            else:
+                draw.text((20, 20), title, font=font, fill="white")
+
+        if subtitle:
+            if banner_size == (216, 1184):
+                draw.text(
+                    (position[0], position[1] + banner_size[0] / 10 + font_size),
+                    subtitle,
+                    font=sub_font,
+                    fill="white",
+                )
+            elif banner_size == (640, 1160):
+                draw.text(
+                    (50, 50 + banner_size[0] / 10 + font_size),
+                    subtitle,
+                    font=sub_font,
+                    fill="white",
+                )
+            elif banner_size == (380, 380):
+                draw.text(
+                    (5, 5 + banner_size[0] / 10 + font_size),
+                    subtitle,
+                    font=sub_font,
+                    fill="white",
+                )
+            else:
+                draw.text(
+                    (20, 20 + font_size * 2),
+                    subtitle,
+                    font=sub_font,
+                    fill="white",
+                )
+
+        image.save(f"{os.environ['PICTURES_FOLDER']}/{filename}.png")
+
+    except UnicodeEncodeError:
+        # Если возникла ошибка, значит текст содержит символы, не поддерживаемые шрифтом по умолчанию
+        print(
+            "Ошибка кодировки. Пожалуйста, используйте шрифт, поддерживающий кириллицу."
+        )
+
+    return image
