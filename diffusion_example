@@ -1,19 +1,13 @@
 import torch
-from diffusers import AutoPipelineForText2Image
+from diffusers import AutoPipelineForText2Image, KandinskyPriorPipeline, KandinskyPipeline
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np
 from rembg import remove
 import random
 
+# Загрузка модели генерации изображений
 pipeline = AutoPipelineForText2Image.from_pretrained("kandinsky-community/kandinsky-2-1", torch_dtype=torch.float16).to("cuda")
 pipeline.enable_model_cpu_offload()
-
-import torch
-from diffusers import AutoPipelineForText2Image
-from PIL import Image, ImageDraw, ImageFont
-import numpy as np
-from rembg import remove
-import random
 
 # Определение кластеров и возможных объектов для каждого кластера
 clusters = {
@@ -154,6 +148,32 @@ def remove_background(image):
     image_np_nobg = remove(image_np)
     return Image.fromarray(image_np_nobg)
 
+# Функция для применения стиля
+def apply_style_transfer(generated_image, style_image_path):
+    pipe_prior = KandinskyPriorPipeline.from_pretrained(
+        "kandinsky-community/kandinsky-2-1-prior", torch_dtype=torch.float16
+    )
+    pipe_prior.to("cuda")
+
+    # Загрузка изображения стиля
+    style_image = Image.open(style_image_path).convert("RGB")
+    style_image = style_image.resize((512, 512))
+
+    # add all the conditions we want to interpolate, can be either text or image
+    images_texts = ["", generated_image, style_image]
+
+    # specify the weights for each condition in images_texts
+    weights = [0.1, 0.7, 0.2]
+
+    prior_out = pipe_prior.interpolate(images_texts, weights)
+
+    pipe = KandinskyPipeline.from_pretrained("kandinsky-community/kandinsky-2-1", torch_dtype=torch.float16)
+    pipe.to("cuda")
+
+    styled_image = pipe(prompt="", **prior_out, height=768, width=768).images[0]
+    
+    return styled_image
+
 # Функция для масштабирования изображения
 def scale_image(image, target_height):
     aspect_ratio = image.width / image.height
@@ -163,18 +183,40 @@ def scale_image(image, target_height):
 
 # Функция для объединения изображений
 def combine_images(banner_image, generated_image, position):
-    banner_image.paste(generated_image, position, generated_image)
+    if generated_image.mode == 'RGBA':
+        # Извлечение альфа-канала для маски
+        alpha = generated_image.split()[3]
+        banner_image.paste(generated_image, position, alpha)
+    else:
+        banner_image.paste(generated_image, position)
     return banner_image
 
 # Функция для добавления текста на изображение
-def add_text_to_image(image, text, position):
+def add_multiline_text(image, text, position, font_path="arial.ttf", max_font_size=40, max_width=500):
     draw = ImageDraw.Draw(image)
-    try:
-        font = ImageFont.load_default()  # Шрифт по умолчанию
-        draw.text(position, text, font=font, fill="white")
-    except UnicodeEncodeError:
-        # Если возникла ошибка, значит текст содержит символы, не поддерживаемые шрифтом по умолчанию
-        print("Ошибка кодировки. Пожалуйста, используйте шрифт, поддерживающий кириллицу.")
+    font_size = max_font_size
+    font = ImageFont.truetype(font_path, font_size)
+    
+    # Уменьшение шрифта, пока текст не поместится по ширине
+    while font_size > 10:
+        lines = []
+        words = text.split()
+        while words:
+            line = ''
+            while words and draw.textsize(line + words[0], font=font)[0] <= max_width:
+                line += (words.pop(0) + ' ')
+            lines.append(line)
+        if draw.textsize('\n'.join(lines), font=font)[0] <= max_width:
+            break
+        font_size -= 1
+        font = ImageFont.truetype(font_path, font_size)
+    
+    y_text = position[1]
+    for line in lines:
+        width, height = draw.textsize(line, font=font)
+        draw.text((position[0], y_text), line, font=font, fill="white")
+        y_text += height
+
     return image
 
 # Функция для создания фона
@@ -191,18 +233,25 @@ def create_background(cluster, width, height):
             return create_gradient_background(color1, color2, width, height)
 
 # Основная функция для генерации баннера
-def generate_banner(cluster, product_type, banner_size):
+def generate_banner(cluster, product_type, banner_size, style_image_path):
     # Генерация нового изображения
     generated_image = generate_image(cluster, product_type)
 
-    # Удаление фона из сгенерированного изображения
-    generated_image_nobg = remove_background(generated_image)
+    # Применение стиля к сгенерированному изображению
+    styled_image = apply_style_transfer(generated_image, style_image_path)
+
+    # Удаление фона из стилизованного изображения
+    styled_image_nobg = remove_background(styled_image)
+
+    # Приведение изображения к формату RGB
+    if styled_image_nobg.mode != "RGB":
+        styled_image_nobg = styled_image_nobg.convert("RGB")
 
     # Создание фона
     background = create_background(cluster, banner_size[1], banner_size[0])
 
     # Масштабирование сгенерированного изображения
-    scaled_image = scale_image(generated_image_nobg, banner_size[0])
+    scaled_image = scale_image(styled_image_nobg, banner_size[0])
 
     # Определение позиции текста и изображения в зависимости от размера баннера
     if banner_size == (216, 1184):
@@ -217,23 +266,12 @@ def generate_banner(cluster, product_type, banner_size):
 
     # Объединение изображений
     final_image = combine_images(background, scaled_image, image_position)
-    final_image.save('final_combined_banner.png')
-    # Текст для продукта
-    #text = product_texts.get(product_type, "")
-
-    # Добавление текста на изображение
-    #final_image_with_text = add_text_to_image(final_image, text, text_position)
-
-    # Сохранение результата
-    #final_image_with_text.save('final_combined_banner_with_text.png')
-
-    # Отображение результата
-    #final_image_with_text.show()
-
-
+    final_image.save('res.png')
 
 # Вызов функции для генерации баннера с учетом заданного кластера, типа продукта и размера баннера
-cluster = 'a. Супер-ЗП (6,15)'
+cluster = 'k. Без продукта (7,13,18)'
 product_type = 'Классический потребительский кредит'
 banner_size = (216, 1184)  # Или (380, 380), или (640, 1160)
-generate_banner(cluster, product_type, banner_size)
+style_image_path = '/content/Снимок экрана 2024-06-23 в 22.43.34.png'
+generate_banner(cluster, product_type, banner_size, style_image_path)
+
