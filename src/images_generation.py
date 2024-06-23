@@ -386,6 +386,7 @@ async def add_text_to_image(image, title: str, subtitle: str, banner_size, filen
     try:
         try:
             font_size = calc_font_size(banner_size)
+            print(f"{font_size} " * 100)
             font = ImageFont.truetype(os.environ["TITLE_FONT_PATH"], int(font_size))
             sub_font = ImageFont.truetype(
                 os.environ["DESCRIPTION_FONT_PATH"], int(font_size) - 6
