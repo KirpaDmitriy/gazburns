@@ -257,12 +257,12 @@ const CasePage = () => {
                                 </Form.Item>
                                 <Form.Item label='Возраст'>
                                     <Flex justify='space-between'>
-                                        <Form.Item name="ageFrom" style={{margin: 0}}>
+                                        <Form.Item name="ageFrom" style={{margin: 0}} rules={[{required: true, message: 'Пожалуйста, выберите возраст'}]}>
                                             <InputNumber min={14} max={99} onBlur={handleChangeFrom} placeholder="От"
                                                          style={{width: '95%'}}
                                                          disabled={!!currentCase?.id || loading}/>
                                         </Form.Item>
-                                        <Form.Item name="ageTo" style={{margin: 0}}>
+                                        <Form.Item name="ageTo" style={{margin: 0}} rules={[{required: true, message: 'Пожалуйста, выберите возраст'}]}>
                                             <InputNumber min={14} max={99} onBlur={handleChangeTo} placeholder="До"
                                                          style={{width: '95%'}}
                                                          disabled={!!currentCase?.id || loading}/>

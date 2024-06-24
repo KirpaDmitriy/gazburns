@@ -363,7 +363,7 @@ def create_background(cluster, width, height):
             return create_solid_background(color, width, height), color_name
         else:
             colors, colors_names = random.choice(gradient_colors)
-            color1, color2 = colors
+            color1, color2 = colors_names
             return (
                 create_gradient_background(color1, color2, width, height),
                 colors_names,

@@ -88,8 +88,9 @@ const LoginPage = () => {
             </Form>
             <div className={styles.test}>
                 <p>Тестовые пользователи:</p>
-                <p>Логин: user1 Пароль: password1</p>
+                <p><b>Логин: test1 Пароль: test1</b></p>
                 <p>Логин: user2 Пароль: password2</p>
+                <a href="https://disk.yandex.com/i/dHjkcExhZrD5xA" target="_blank">Инструкция пользователя</a>
             </div>
         </div>
     );
