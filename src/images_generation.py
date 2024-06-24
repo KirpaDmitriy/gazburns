@@ -192,20 +192,26 @@ clusters = {
 
 # Определение фонов
 solid_colors = [
-    "#4F6AE8",
-    "#CBE6FC",
-    "#F6C3A8",
-    "#6580F7",
-    "#DEDDFC",
-    "#663546",
-    "#F4F6FA",
+    ("#4F6AE8", "medium blue"),
+    ("#CBE6FC", "pale (mostly white) blue"),
+    ("#F6C3A8", "salmon pink"),
+    ("#6580F7", "royal blue"),
+    ("#DEDDFC", "lavender"),
+    ("#663546", "dark wine colour"),
+    ("#F4F6FA", "light gray"),
 ]
+
 gradient_colors = [
     ("#8A9EF6", "#445DD3"),
+    ("periwinkle blue", "deeper blue"),
     ("#79B8EE", "#3372B5"),
+    ("azure", "cobalt blue"),
     ("#B2D8FA", "#9F509B"),
+    ("pale blue", "muted plum"),
     ("#DEEFFD", "#569BDC"),
+    ("light blue", "standard blue"),
     ("#8B9443", "#B0E4CA"),
+    ("olive green", "soft teal"),
 ]
 
 # Определение текстов для типов продуктов
@@ -249,10 +255,15 @@ def create_gradient_background(color1, color2, width, height):
 
 
 # Функция для генерации изображения
-def generate_raw_image(cluster, product_description: str | None = None):
+def generate_raw_image(
+    cluster,
+    product_description: str | None = None,
+    color_topic_1: str | None = None,
+    color_topic_2: str | None = None,
+):
     objects = get_random_objects(cluster)
     objects_prompt = ", ".join(objects)
-    prompt = f"{objects_prompt}, 3d, cinematic, blue moody lighting, realistic, official, big, solid white background, colourful with blue elements, banking thematics"
+    prompt = f"{objects_prompt}, 3d, cinematic, blue moody lighting, realistic, official, big, solid white background, colourful with {color_topic_1} elements, banking thematics"
     if product_description:
         prompt += f" for advertising the following product: {product_description}"
     negative_prompt = "low quality, bad quality, cartoon, futuristic, text"
@@ -345,14 +356,18 @@ def calc_font_size(banner_size) -> int:
 def create_background(cluster, width, height):
     if cluster == "a. Супер-ЗП (6,15)" or cluster == "e. Супер-аффлуент (-1)":
         color = "#663546"
-        return create_solid_background(color, width, height)
+        return create_solid_background(color, width, height), "red"
     else:
         if random.random() > 0.5:
-            color = random.choice(solid_colors)
-            return create_solid_background(color, width, height)
+            color, color_name = random.choice(solid_colors)
+            return create_solid_background(color, width, height), color_name
         else:
-            color1, color2 = random.choice(gradient_colors)
-            return create_gradient_background(color1, color2, width, height)
+            colors, colors_names = random.choice(gradient_colors)
+            color1, color2 = colors
+            return (
+                create_gradient_background(color1, color2, width, height),
+                colors_names,
+            )
 
 
 # Основная функция для генерации баннера
@@ -362,15 +377,24 @@ def generate_banner(
     banner_size: tuple[int, int],
     product: str | None = None,
 ) -> None:
+    # Создание фона
+    background, color_topic = create_background(cluster, banner_size[1], banner_size[0])
+    if isinstance(color_topic, tuple):
+        color_topic_1, color_topic_2 = color_topic
+    else:
+        color_topic_1, color_topic_2 = color_topic, None
+
     # Генерация нового изображения
-    generated_image = generate_raw_image(cluster, product_description=product)
+    generated_image = generate_raw_image(
+        cluster,
+        product_description=product,
+        color_topic_1=color_topic_1,
+        color_topic_2=color_topic_2,
+    )
 
     # Удаление фона из сгенерированного изображения
     generated_image_nobg = remove_background(generated_image)
     generated_image_nobg.save(f"{os.environ['PICTURES_FOLDER']}/{filename}_object.png")
-
-    # Создание фона
-    background = create_background(cluster, banner_size[1], banner_size[0])
 
     # Масштабирование сгенерированного изображения
     scaled_image = scale_image(generated_image_nobg, banner_size[0])
