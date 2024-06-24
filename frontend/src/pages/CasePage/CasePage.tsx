@@ -27,8 +27,8 @@ interface ICaseForm {
 const options = [
     {
         id: 1,
-        height: 1024,
-        width: 1024,
+        height: 380,
+        width: 380,
         name: "Квадрат"
     },
     {
@@ -39,21 +39,21 @@ const options = [
     },
     {
         id: 3,
-        height: 200,
-        width: 500,
-        name: "Mobile"
+        height: 216,
+        width: 1184,
+        name: "Web 2"
     },
     {
         id: 3,
-        height: 400,
-        width: 1000,
-        name: "Mobile 2"
+        height: 640,
+        width: 1160,
+        name: "Mobile"
     },
     {
         id: 3,
         height: 300,
         width: 900,
-        name: "Mobile 3"
+        name: "Mobile 2"
     },
 ];
 
@@ -97,7 +97,16 @@ const CasePage = () => {
     }, [currentCase]);
 
     useEffect(() => {
-        console.log(selectedIndex);
+        if (!cases.length) {
+            instance.get<CaseType[]>('/cases').then(response => {
+                setCases(response.data);
+            }).catch(() => {
+                notification.warning({message: 'Нет соединения с бекэндом'});
+            })
+        }
+    }, []);
+
+    useEffect(() => {
         if (currentCase) {
             form.setFieldValue('subtitle', currentCase.images[selectedIndex]?.subtitle);
             form.setFieldValue('title', currentCase.images[selectedIndex]?.title);
@@ -134,55 +143,60 @@ const CasePage = () => {
             }).then((response) => {
                 setCases([...cases, response.data]);
                 next();
-                navigate('/case/' + response.data.id, { replace: true });
+                navigate('/case/' + response.data.id, {replace: true});
             }).catch(() => {
                 notification.error({message: 'Произошла ошибка на стороне сервера'})
             }).finally(() => setLoading(false));
-        }
-        else instance.post<CaseType>('add_text', {
+        } else instance.post<CaseType>('add_text', {
             case_id: currentCase?.id,
             picture_id: currentCase?.images[selectedIndex].id,
             title,
             subtitle
         }).then((response) => {
-            setCases(cases.map(it => it.id === response.data.id ? {...response.data, images: response.data.images} : it));
+            setCases(cases.map(it => it.id === response.data.id ? {
+                ...response.data,
+                images: response.data.images
+            } : it));
             setSelectedIndex(currentCase ? currentCase.images.length - 1 : 0);
         }).catch(() => {
             notification.error({message: 'Произошла ошибка на стороне сервера'})
         }).finally(() => setLoading(false));
     }
 
-    const handleChangeFrom = (val: number) => {
-        form.setFieldValue('ageFrom', val > form.getFieldValue("ageTo") ? form.getFieldValue("ageTo") : val);
+    const handleChangeFrom = () => {
+        form.setFieldValue('ageFrom', form.getFieldValue("ageFrom") > form.getFieldValue("ageTo") ? form.getFieldValue("ageTo") : form.getFieldValue("ageFrom"));
     };
 
-    const handleChangeTo = (val: number) => {
-        form.setFieldValue('ageTo', val < form.getFieldValue("ageFrom") ? form.getFieldValue("ageFrom") : val);
+    const handleChangeTo = () => {
+        form.setFieldValue('ageTo', form.getFieldValue("ageTo") < form.getFieldValue("ageFrom") ? form.getFieldValue("ageFrom") : form.getFieldValue("ageTo"));
     };
-    const handleChangeSalaryFrom = (val: number) => {
-        form.setFieldValue('salaryFrom', val > form.getFieldValue("salaryTo") ? form.getFieldValue("salaryTo") : val);
-    };
-
-    const handleChangeSalaryTo = (val: number) => {
-        form.setFieldValue('salaryTo', val < form.getFieldValue("salaryFrom") ? form.getFieldValue("salaryFrom") : val);
+    const handleChangeSalaryFrom = () => {
+        form.setFieldValue('salaryFrom', form.getFieldValue("salaryFrom") > form.getFieldValue("salaryTo") ? form.getFieldValue("salaryTo") : form.getFieldValue("salaryFrom"));
     };
 
-    // const handleGenText = () => {
-    //     setLoading(true);
-    //     instance.get("generate_text?case_id=" + currentCase?.id).then((response) => {
-    //         form.setFieldValue("title", response.data.title);
-    //         form.setFieldValue("subtitle", response.data.subtitle);
-    //     }).catch(() => {
-    //         notification.error({message: 'Произошла ошибка на стороне сервера'})
-    //     }).finally(() => setLoading(false));
-    // };
+    const handleChangeSalaryTo = () => {
+        form.setFieldValue('salaryTo', form.getFieldValue("salaryTo") < form.getFieldValue("salaryFrom") ? form.getFieldValue("salaryFrom") : form.getFieldValue("salaryTo"));
+    };
+
+    const handleGenText = () => {
+        setLoading(true);
+        instance.post("slogans", {case_id: currentCase?.id}).then((response) => {
+            form.setFieldValue("title", response.data.title.slice(1, response.data.title.length - 1));
+            form.setFieldValue("subtitle", response.data.subtitle.slice(1, response.data.subtitle.length - 1));
+        }).catch(() => {
+            notification.error({message: 'Произошла ошибка на стороне сервера'})
+        }).finally(() => setLoading(false));
+    };
 
     const handleRegenerate = () => {
         setLoading(true);
         instance.post("regenerate", {
             case_id: currentCase?.id,
         }).then((response) => {
-            setCases(cases.map(it => it.id === response.data.id ? {...response.data, images: response.data.images} : it));
+            setCases(cases.map(it => it.id === response.data.id ? {
+                ...response.data,
+                images: response.data.images
+            } : it));
             setSelectedIndex(currentCase ? currentCase.images.length - 1 : 0);
         }).catch(() => {
             notification.error({message: 'Произошла ошибка на стороне сервера'})
@@ -197,7 +211,10 @@ const CasePage = () => {
             title: "",
             subtitle: "",
         }).then((response) => {
-            setCases(cases.map(it => it.id === response.data.id ? {...response.data, images: response.data.images} : it));
+            setCases(cases.map(it => it.id === response.data.id ? {
+                ...response.data,
+                images: response.data.images
+            } : it));
             setSelectedIndex(currentCase ? currentCase.images.length - 1 : 0);
         }).catch(() => {
             notification.error({message: 'Произошла ошибка на стороне сервера'})
@@ -207,13 +224,7 @@ const CasePage = () => {
     const next = () => setStep(step + 1);
     const round = (x: number, y: number) => (x / y === Math.round(x / y)) ? x / y : (x / y).toFixed(1);
 
-    return loading ? (
-        <div className={styles.loading}>
-            <Spin/>
-            <span>Пожалуйста, подождите.</span>
-            <span>Обычно генерация занимает не больше 20 секунд.</span>
-        </div>
-    ) : (
+    return (
         <div className={styles.container}>
             <Breadcrumb
                 className={styles.link}
@@ -227,30 +238,34 @@ const CasePage = () => {
                 ]}
             />
             <div className={styles.formWrapper}>
-                <Steps type="navigation" current={step} items={stepItems} onChange={(val) => setStep(val)} className={styles.step} size="small"/>
+                <Steps type="navigation" current={step} items={stepItems} onChange={(val) => setStep(val)}
+                       className={styles.step} size="small"/>
                 <Form className={styles.form} onFinish={onFinish} layout='vertical' form={form}>
                     {!step ? (
                         <>
-                            <Form.Item label='Описание пользователя'>
-                                <Form.Item name="segment" label='Сегмент' rules={[{required: true, message: 'Пожалуйста, выберите сегменты'}]}>
+                            <Form.Item label='Описание пользователя' style={{width: '100%'}}>
+                                <Form.Item name="segment" label='Сегмент'
+                                           rules={[{required: true, message: 'Пожалуйста, выберите сегменты'}]}>
                                     <Select
                                         mode="multiple"
                                         allowClear
                                         style={{width: '100%'}}
                                         placeholder="Сегмент пользователей"
                                         options={segmentOptions}
-                                        disabled={!!currentCase?.id}
+                                        disabled={!!currentCase?.id || loading}
                                     />
                                 </Form.Item>
                                 <Form.Item label='Возраст'>
                                     <Flex justify='space-between'>
                                         <Form.Item name="ageFrom" style={{margin: 0}}>
-                                            <InputNumber min={14} max={99} onChange={handleChangeFrom} placeholder="От"
-                                                         style={{width: '95%'}} disabled={!!currentCase?.id}/>
+                                            <InputNumber min={14} max={99} onBlur={handleChangeFrom} placeholder="От"
+                                                         style={{width: '95%'}}
+                                                         disabled={!!currentCase?.id || loading}/>
                                         </Form.Item>
                                         <Form.Item name="ageTo" style={{margin: 0}}>
-                                            <InputNumber min={14} max={99} onChange={handleChangeTo} placeholder="До"
-                                                         style={{width: '95%'}} disabled={!!currentCase?.id}/>
+                                            <InputNumber min={14} max={99} onBlur={handleChangeTo} placeholder="До"
+                                                         style={{width: '95%'}}
+                                                         disabled={!!currentCase?.id || loading}/>
                                         </Form.Item>
                                     </Flex>
                                 </Form.Item>
@@ -261,74 +276,96 @@ const CasePage = () => {
                                         defaultActiveFirstOption
                                         placeholder="Пол"
                                         options={genderOptions}
-                                        disabled={!!currentCase?.id}
+                                        disabled={!!currentCase?.id || loading}
                                     />
                                 </Form.Item>
-                                <Form.Item name="salaryFrom" label="Сумма зарплатных поступлений за 12 месяцев (тыс. р.)" rules={[{required: true, message: 'Пожалуйста, введите сумму поступлений'}]}>
+                                <Form.Item name="salaryFrom"
+                                           label="Сумма зарплатных поступлений за 12 месяцев (тыс. р.)"
+                                           rules={[{required: true, message: 'Пожалуйста, введите сумму поступлений'}]}>
                                     <Flex justify='space-between'>
                                         <Form.Item name="salaryFrom" style={{margin: 0}}>
-                                            <InputNumber min={1} max={500000} onChange={handleChangeSalaryFrom} placeholder="От" style={{width: '95%'}} disabled={!!currentCase?.id}/>
+                                            <InputNumber min={100} max={500000} onBlur={handleChangeSalaryFrom}
+                                                         placeholder="От" style={{width: '95%'}}
+                                                         disabled={!!currentCase?.id || loading}/>
                                         </Form.Item>
                                         <Form.Item name="salaryTo" style={{margin: 0}}>
-                                            <InputNumber min={1} max={500000} onChange={handleChangeSalaryTo} placeholder="До" style={{width: '95%'}} disabled={!!currentCase?.id}/>
+                                            <InputNumber min={100} max={500000} onBlur={handleChangeSalaryTo}
+                                                         placeholder="До" style={{width: '95%'}}
+                                                         disabled={!!currentCase?.id || loading}/>
                                         </Form.Item>
                                     </Flex>
                                 </Form.Item>
                                 <Form.Item name="audience" style={{margin: 0}}>
-                                    <TextArea className={styles.text} placeholder="Дополнительное описание" disabled={!!currentCase?.id}/>
+                                    <TextArea className={styles.text} placeholder="Дополнительное описание"
+                                              disabled={!!currentCase?.id || loading}/>
                                 </Form.Item>
                             </Form.Item>
                             <Form.Item name="product" label='Описание продукта' rules={[{required: true}]}>
-                                <TextArea className={styles.text} placeholder="Опишите продукт: что продаем?" disabled={!!currentCase?.id}/>
+                                <TextArea className={styles.text} placeholder="Опишите продукт: что продаем?"
+                                          disabled={!!currentCase?.id || loading}/>
                             </Form.Item>
                             <Form.Item name="size" label="Формат изображения"
                                        rules={[{required: true, message: 'Пожалуйста, выберите формат'}]}>
-                                <Select size="middle" disabled={!!currentCase?.id} options={options.map((opt, index) => ({
-                                    value: index,
-                                    label:
-                                        <span><b>1:{round(opt.width, opt.height)}</b> {opt.name} ({opt.height}x{opt.width})</span>
-                                }))}/>
+                                <Select size="middle" disabled={!!currentCase?.id || loading}
+                                        options={options.map((opt, index) => ({
+                                            value: index,
+                                            label:
+                                                <span><b>1:{round(opt.width, opt.height)}</b> {opt.name} ({opt.height}x{opt.width})</span>
+                                        }))}/>
                             </Form.Item>
                             <Form.Item className={styles.generateWrapper}>
-                                <Button type="primary" htmlType="submit" className={styles.generate} disabled={!!currentCase?.id}>Сгенерировать
+                                <Button type="primary" htmlType="submit" className={styles.generate}
+                                        disabled={!!currentCase?.id || loading}>Сгенерировать
                                     картинку</Button>
                             </Form.Item>
                         </>
                     ) : (
                         <>
-                            <Form.Item name='title'>
+                            <Form.Item name='title' validateTrigger="onBlur"
+                                       rules={[{max: 50}]}>
                                 <TextArea className={styles.text} placeholder="Заголовок" value={title}
-                                          onChange={(e) => setTitle(e.target.value)}/>
+                                          onChange={(e) => setTitle(e.target.value)} disabled={loading}/>
                             </Form.Item>
-                            <Form.Item name='subtitle'>
+                            <Form.Item name='subtitle' validateTrigger="onBlur"
+                                       rules={[{max: 60}]}>
                                 <TextArea className={styles.text} placeholder="Подзаголовок" value={subtitle}
-                                          onChange={(e) => setSubtitle(e.target.value)}/>
+                                          onChange={(e) => setSubtitle(e.target.value)} disabled={loading}/>
                             </Form.Item>
                             <Flex justify='space-between' className={styles.buttonGroup}>
-                                <Button type="primary" htmlType="submit" size="large" onClick={next}>Применить</Button>
-                                <Button type="dashed" danger size="large" onClick={handleClearText}>Сбросить текст</Button>
+                                <Button type="primary" htmlType="submit" size="large" onClick={next}
+                                        disabled={loading}>Применить</Button>
+                                <Button type="dashed" danger size="large" onClick={handleClearText} disabled={loading}>Сбросить
+                                    текст</Button>
                             </Flex>
-                            {/*<Form.Item>*/}
-                            {/*    <Button type="primary" size="large" onClick={handleGenText}*/}
-                            {/*            className={styles.altButton}>Сгенерировать*/}
-                            {/*        текст автоматически</Button>*/}
-                            {/*</Form.Item>*/}
+                            <Form.Item>
+                                <Button type="primary" size="large" style={{width: '100%'}} onClick={handleGenText}
+                                        className={styles.altButton} disabled={loading}>Сгенерировать
+                                    текст автоматически</Button>
+                            </Form.Item>
                         </>
                     )}
                 </Form>
             </div>
             <div className={styles.workspace}>
-                {(currentCase?.images || []).length ? (
-                    <>
-                        <div className={styles.imgWrapper}>
-                            <Carousel slides={currentCase?.images || []} selected={selectedIndex}
-                                      setSelected={setSelectedIndex}/>
+                {loading ? (
+                        <div className={styles.loading}>
+                            <Spin/>
+                            <span>Пожалуйста, подождите.</span>
+                            <span>Обычно генерация занимает не больше 20 секунд.</span>
                         </div>
-                        <Button type="primary" onClick={handleRegenerate}>Сгенерировать другую</Button>
-                    </>
-                ) : (
-                    <span className={styles.notYet}>Еще не создано</span>
-                )}
+                    ) :
+                    (currentCase?.images || []).length ? (
+                        <>
+                            <div className={styles.imgWrapper}>
+                                <Carousel slides={currentCase?.images || []} selected={selectedIndex}
+                                          setSelected={setSelectedIndex}/>
+                            </div>
+                            <Button type="primary" onClick={handleRegenerate}>Сгенерировать другую</Button>
+                        </>
+                    ) : (
+                        <span className={styles.notYet}>Еще не создано</span>
+                    )
+                }
             </div>
         </div>
     )

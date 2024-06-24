@@ -6,6 +6,11 @@
   border: 1px solid #476BF0;
   background-color: #DCE2F0;
   border-radius: 16px;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    border: 1px solid #203170;
+  }
 }
 
 .img {

@@ -26,7 +26,7 @@ const CasePage = () => {
             </Link>
           {cases.toReversed().map((value) => (
               <Link to={`/case/${value.id}`} key={value.id} className={styles.link}>
-                <Case src={value.images[0]?.src}/>
+                <Case src={value.images[value.images.length - 1]?.src}/>
               </Link>
           ))}
         </div>

@@ -13,6 +13,7 @@ export interface Meta {
 export interface Generation {
     id: number;
     src: string;
+    object: string | null;
     title: string;
     subtitle: string;
 }
@@ -30,18 +31,21 @@ export const casesMock: CaseType[] = [
             {
                 id: 1,
                 src: 'https://steamuserimages-a.akamaihd.net/ugc/862857581989807965/89518896478AB5FC4C81035678DB2B441ACE107A/?imw=512&imh=384&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
+                object: 'https://steamuserimages-a.akamaihd.net/ugc/862857581989807965/89518896478AB5FC4C81035678DB2B441ACE107A/?imw=512&imh=384&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
                 title: '1',
                 subtitle: 'Lorem ipsum dolor',
             },
             {
                 id: 2,
                 src: 'https://steamuserimages-a.akamaihd.net/ugc/862857581989807965/89518896478AB5FC4C81035678DB2B441ACE107A/?imw=512&imh=384&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
+                object: 'https://steamuserimages-a.akamaihd.net/ugc/862857581989807965/89518896478AB5FC4C81035678DB2B441ACE107A/?imw=512&imh=384&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
                 title: '2',
                 subtitle: 'Lorem ipsum dolor',
             },
             {
                 id: 3,
                 src: 'https://steamuserimages-a.akamaihd.net/ugc/862857581989807965/89518896478AB5FC4C81035678DB2B441ACE107A/?imw=512&imh=384&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
+                object: 'https://steamuserimages-a.akamaihd.net/ugc/862857581989807965/89518896478AB5FC4C81035678DB2B441ACE107A/?imw=512&imh=384&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
                 title: '3',
                 subtitle: 'Lorem ipsum dolor',
             },
@@ -59,6 +63,7 @@ export const casesMock: CaseType[] = [
             {
                 id: 1,
                 src: 'https://frankmedia.ru/wp-content/uploads/2021/09/63e8cdb3b120.jpeg',
+                object: 'https://steamuserimages-a.akamaihd.net/ugc/862857581989807965/89518896478AB5FC4C81035678DB2B441ACE107A/?imw=512&imh=384&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
                 title: '2',
                 subtitle: 'Lorem ipsum dolor',
             },
@@ -76,6 +81,7 @@ export const casesMock: CaseType[] = [
             {
                 id: 1,
                 src: 'https://steamuserimages-a.akamaihd.net/ugc/862857581989807965/89518896478AB5FC4C81035678DB2B441ACE107A/?imw=512&imh=384&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
+                object: 'https://steamuserimages-a.akamaihd.net/ugc/862857581989807965/89518896478AB5FC4C81035678DB2B441ACE107A/?imw=512&imh=384&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
                 title: '3',
                 subtitle: 'Lorem ipsum dolor',
             },
@@ -93,6 +99,7 @@ export const casesMock: CaseType[] = [
             {
                 id: 1,
                 src: 'https://steamuserimages-a.akamaihd.net/ugc/862857581989807965/89518896478AB5FC4C81035678DB2B441ACE107A/?imw=512&imh=384&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
+                object: 'https://steamuserimages-a.akamaihd.net/ugc/862857581989807965/89518896478AB5FC4C81035678DB2B441ACE107A/?imw=512&imh=384&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true',
                 title: '4',
                 subtitle: 'Lorem ipsum dolor',
             },

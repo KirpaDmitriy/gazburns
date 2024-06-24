@@ -3,7 +3,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 26px 160px;
+  padding: 18px 160px;
   font-size: 18px;
   font-weight: 500;
   color: #00487c;
@@ -11,7 +11,7 @@
 }
 
 .logo {
-  width: 190px;
+  width: 170px;
 }
 
 @media (max-width: 1300px) {

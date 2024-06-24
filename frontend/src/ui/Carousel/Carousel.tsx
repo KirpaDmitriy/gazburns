@@ -4,7 +4,8 @@ import {Thumb} from "../Thumb/Thumb.tsx";
 import {Generation} from "../../mocks/cases.ts";
 
 import styles from './style.module.css';
-import {DownloadOutlined} from "@ant-design/icons";
+import {DownloadOutlined, FileImageOutlined} from "@ant-design/icons";
+import {Tooltip} from "antd";
 
 type PropType = {
     slides: Generation[];
@@ -12,8 +13,8 @@ type PropType = {
     setSelected: (index: number) => void;
 }
 
-export const Carousel: React.FC<PropType> = ({ slides, setSelected, selected }) => {
-    const [mainViewportRef, embla] = useEmblaCarousel({ skipSnaps: false });
+export const Carousel: React.FC<PropType> = ({slides, setSelected, selected}) => {
+    const [mainViewportRef, embla] = useEmblaCarousel({skipSnaps: false});
     const [thumbViewportRef, emblaThumbs] = useEmblaCarousel({
         containScroll: "keepSnaps",
         dragFree: true
@@ -51,9 +52,16 @@ export const Carousel: React.FC<PropType> = ({ slides, setSelected, selected }) 
                         {slides.map((gen) => (
                             <div className="embla__slide" key={gen.id}>
                                 <div className="embla__slide__inner">
-                                    <a href={gen.src} download className={styles.download}>
-                                        <DownloadOutlined />
-                                    </a>
+                                    <Tooltip title="Скачать баннер">
+                                        <a href={gen.src} download target="_blank" className={styles.download}>
+                                            <DownloadOutlined/>
+                                        </a>
+                                    </Tooltip>
+                                    <Tooltip title="Скачать png объекта">
+                                        <a href={gen.object || ''} download target="_blank" className={styles.downloadObj}>
+                                            <FileImageOutlined/>
+                                        </a>
+                                    </Tooltip>
                                     <img
                                         className="embla__slide__img"
                                         src={gen.src}

@@ -15,7 +15,7 @@ const Header = () => {
 
     return (
         <div className={styles.container}>
-            <img src={viteLogo} className={styles.logo} alt="logo"/>
+            <Link to="/home"><img src={viteLogo} className={styles.logo} alt="logo"/></Link>
             <Link to="/login" onClick={handleClick}><Button>Выход</Button></Link>
         </div>
     );

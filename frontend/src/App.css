@@ -1,5 +1,28 @@
+@font-face {
+  font-family: "Proxima Nova Rg";
+  src: url("./assets/Prox_nova.otf");
+}
+
+@font-face {
+  font-weight: 400; /* Соответствует значению normal */
+  font-family: "Proxima Nova Rg";
+  src: url("./assets/Prox_nova.otf");
+}
+
+@font-face {
+  font-weight: 700; /* Соответствует значению bold */
+  font-family: "Proxima Nova Rg";
+  src: url("./assets/Prox_nova_bold.otf");
+}
+
+
 * {
   box-sizing: border-box;
+  font-family: "Proxima Nova Rg", -apple-system, BlinkMacSystemFont,
+  "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+  "Droid Sans", "Helvetica Neue", sans-serif!important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
   &::-webkit-scrollbar-track
   {
@@ -41,4 +64,9 @@ body {
 .app {
   width: 100%;
   height: 100%;
+}
+
+button {
+  height: 48px!important;
+  padding: 0 24px!important;
 }

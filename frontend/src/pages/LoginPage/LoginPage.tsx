@@ -1,5 +1,5 @@
 import {Button, Form, Input, notification, Spin} from "antd";
-import Icon, {UserOutlined, LockOutlined} from '@ant-design/icons';
+import {UserOutlined, LockOutlined} from '@ant-design/icons';
 
 import styles from './style.module.css';
 import {baseUrl} from "../../services/api.config.ts";
