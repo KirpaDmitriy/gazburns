@@ -202,16 +202,11 @@ solid_colors = [
 ]
 
 gradient_colors = [
-    ("#8A9EF6", "#445DD3"),
-    ("periwinkle blue", "deeper blue"),
-    ("#79B8EE", "#3372B5"),
-    ("azure", "cobalt blue"),
-    ("#B2D8FA", "#9F509B"),
-    ("pale blue", "muted plum"),
-    ("#DEEFFD", "#569BDC"),
-    ("light blue", "standard blue"),
-    ("#8B9443", "#B0E4CA"),
-    ("olive green", "soft teal"),
+    (("#8A9EF6", "#445DD3"), ("periwinkle blue", "deeper blue")),
+    (("#79B8EE", "#3372B5"), ("azure", "cobalt blue")),
+    (("#B2D8FA", "#9F509B"), ("pale blue", "muted plum")),
+    (("#DEEFFD", "#569BDC"), ("light blue", "standard blue")),
+    (("#8B9443", "#B0E4CA"), ("olive green", "soft teal")),
 ]
 
 # Определение текстов для типов продуктов
