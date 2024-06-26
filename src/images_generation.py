@@ -3,7 +3,8 @@ import random
 
 import numpy as np
 import torch
-from diffusers import AutoPipelineForText2Image
+from diffusers import (AutoPipelineForText2Image, KandinskyPipeline,
+                       KandinskyPriorPipeline)
 from PIL import Image, ImageDraw, ImageFont
 from rembg import remove
 from torch import autocast
@@ -230,6 +231,34 @@ def get_random_objects(cluster):
     return objects
 
 
+def apply_style_transfer(generated_image, style_image_path):
+    pipe_prior = KandinskyPriorPipeline.from_pretrained(
+        "kandinsky-community/kandinsky-2-1-prior", torch_dtype=torch.float16
+    )
+    pipe_prior.to("cuda")
+
+    # Загрузка изображения стиля
+    style_image = Image.open(style_image_path).convert("RGB")
+    style_image = style_image.resize((512, 512))
+
+    # add all the conditions we want to interpolate, can be either text or image
+    images_texts = ["", generated_image, style_image]
+
+    # specify the weights for each condition in images_texts
+    weights = [0.1, 0.7, 0.2]
+
+    prior_out = pipe_prior.interpolate(images_texts, weights)
+
+    pipe = KandinskyPipeline.from_pretrained(
+        "kandinsky-community/kandinsky-2-1", torch_dtype=torch.float16
+    )
+    pipe.to("cuda")
+
+    styled_image = pipe(prompt="", **prior_out, height=768, width=768).images[0]
+
+    return styled_image
+
+
 # Функция для создания сплошного фона
 def create_solid_background(color, width, height):
     base = Image.new("RGBA", (width, height), color)
@@ -385,6 +414,9 @@ def generate_banner(
         product_description=product,
         color_topic_1=color_topic_1,
         color_topic_2=color_topic_2,
+    )
+    generated_image = apply_style_transfer(
+        generated_image, os.environ["REFERENCE_PATH"]
     )
 
     # Удаление фона из сгенерированного изображения
